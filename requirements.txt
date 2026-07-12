@@ -1,2 +1,7 @@
-pystray
-Pillow
+# Runtime dependencies.
+# Prefer `pip install .` (uses pyproject.toml). This file is provided for
+# convenience and mirrors the runtime deps with platform markers.
+pystray>=0.19
+Pillow>=9.0
+pyobjc-framework-Quartz>=9.0 ; sys_platform == 'darwin'
+pyobjc-framework-Cocoa>=9.0 ; sys_platform == 'darwin'
