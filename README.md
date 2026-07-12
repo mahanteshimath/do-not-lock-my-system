@@ -1,6 +1,13 @@
 # ⚡ Don't Lock My PC
 
-**A lightweight, cross-platform utility that prevents your computer from locking, sleeping, or turning off the display — on both Windows and macOS.**
+**Keep your computer awake and unlocked while long-running AI agents do the work.**
+
+When you kick off an AI agent, coding assistant, or any long task and step away,
+Windows/macOS often lock the screen or go to sleep — pausing or interrupting the
+run. **Don't Lock My PC** keeps your session alive so agents keep working
+uninterrupted, then lets the machine sleep normally when you stop it.
+
+> **Motto:** *While AI agents are working, your system should never lock or sleep.*
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python&logoColor=white)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS-555?logo=apple&logoColor=white)
@@ -12,8 +19,14 @@
 
 ## Overview
 
-Corporate and personal machines often enforce aggressive screen-lock and sleep
-policies. **Don't Lock My PC** keeps your session alive using OS-native,
+**Why this exists:** AI agents and automated workflows often run for many
+minutes or hours. If you walk away, corporate/personal lock and sleep policies
+kick in — locking the screen, sleeping the machine, or turning off the display —
+which can pause the agent, drop RDP/remote sessions, or interrupt the task. Run
+this app before you start a long agent run and it keeps everything awake until
+you click **STOP**.
+
+**Don't Lock My PC** keeps your session alive using OS-native,
 side-effect-free "keep-awake" signals — a tiny mouse nudge and an invisible
 **F15** keypress — combined with the platform's official sleep-prevention API.
 
@@ -32,10 +45,19 @@ small backend abstraction that is selected automatically at runtime.
 > macOS, `caffeinate` handles sleep while the Quartz events keep the session
 > active.
 
+### Typical use cases
+
+- Running an **AI coding agent** or automation that takes many minutes/hours
+- Long **model training / inference / data jobs** you monitor remotely
+- Keeping an **RDP / remote-desktop** session from locking mid-task
+- Presentations, downloads, or any unattended long-running process
+
 ---
 
 ## Features
 
+- **Built for long AI-agent runs** — start it before a lengthy agent/automation
+  task so the session never locks or sleeps mid-run
 - **Cross-platform** — one codebase for Windows and macOS
 - **Catppuccin Mocha dark UI** — clean, modern Tkinter interface
 - **System-tray integration** on Windows (minimizes to tray on close); graceful

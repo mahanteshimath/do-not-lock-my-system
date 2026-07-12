@@ -112,7 +112,7 @@ class DontLockPC:
         ).pack(pady=(20, 2))
         tk.Label(
             content,
-            text="Prevents sleep, display off & screen lock",
+            text="Keeps AI agents running — no lock, sleep or display-off",
             bg=self.BG,
             fg=self.DIM,
             font=(FONT, 9),
