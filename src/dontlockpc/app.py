@@ -12,6 +12,7 @@ import time
 import tkinter as tk
 from datetime import datetime
 
+from . import autostart
 from .backends import get_backend
 from .tray import SystemTray
 
@@ -94,7 +95,7 @@ class DontLockPC:
         content.columnconfigure(0, weight=1)
         # Flexible top/bottom rows keep the controls vertically centered
         content.rowconfigure(0, weight=1)
-        content.rowconfigure(6, weight=1)
+        content.rowconfigure(8, weight=1)
 
         # Header
         tk.Label(
@@ -240,6 +241,27 @@ class DontLockPC:
         )
         self.stop_btn.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=(4, 0))
 
+        # Run at login
+        if autostart.supported():
+            self.autostart_var = tk.BooleanVar(value=autostart.is_enabled())
+            self.autostart_check = tk.Checkbutton(
+                content,
+                text="Start automatically at login",
+                variable=self.autostart_var,
+                command=self._toggle_autostart,
+                bg=self.BG,
+                fg=self.SUBTEXT,
+                activebackground=self.BG,
+                activeforeground=self.TEXT,
+                selectcolor=self.CARD,
+                font=(FONT, 9),
+                bd=0,
+                highlightthickness=0,
+                cursor="hand2",
+                anchor="center",
+            )
+            self.autostart_check.grid(row=6, column=0, sticky="ew", pady=(6, 0))
+
         # Footer
         footer = tk.Frame(content, bg=self.BG)
         footer.grid(row=7, column=0, sticky="ew", pady=(16, 0))
@@ -265,6 +287,12 @@ class DontLockPC:
         color = self.GREEN if self._pulse_state else "#40a040"
         self._draw_pulse(color)
         self.root.after(800, self._animate_pulse)
+
+    def _toggle_autostart(self) -> None:
+        want = self.autostart_var.get()
+        if not autostart.set_enabled(want):
+            # Revert the checkbox if the OS change could not be applied.
+            self.autostart_var.set(not want)
 
     def _minimize_window(self) -> None:
         self.root.iconify()

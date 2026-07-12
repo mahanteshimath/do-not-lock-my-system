@@ -9,6 +9,10 @@ uninterrupted, then lets the machine sleep normally when you stop it.
 
 > **Motto:** *While AI agents are working, your system should never lock or sleep.*
 
+<p align="center">
+  <img src="docs/screenshot.svg" alt="Don't Lock My PC — app window" width="360">
+</p>
+
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python&logoColor=white)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS-555?logo=apple&logoColor=white)
 ![UI](https://img.shields.io/badge/UI-Tkinter-orange)
@@ -63,6 +67,8 @@ small backend abstraction that is selected automatically at runtime.
 - **System-tray integration** on Windows (minimizes to tray on close); graceful
   minimize-to-Dock fallback on macOS
 - **Configurable interval** — set the keep-alive frequency (default: 30s)
+- **Start at login** — optional autostart (Windows registry `Run` key / macOS
+  LaunchAgent) so it's ready before your next agent run
 - **Live status dashboard** — pulse animation, signal counter, last-signal time
 - **Zero footprint** — invisible F15 key and ±1px mouse moves; no interference
 - **Proper Python packaging** — `pip install .`, `dontlockpc` console command
@@ -116,7 +122,26 @@ python dont_lock_pc.py  # legacy launcher (compatibility shim)
 | **STOP** | Halts signals and restores default power/idle behavior |
 | **Close (✕)** | Windows: minimizes to tray · macOS: minimizes to Dock |
 | **Interval field** | Signal frequency in seconds (editable when stopped) |
+| **Start automatically at login** | Toggles autostart (Windows `Run` key / macOS LaunchAgent) |
 | **Tray → Show/Start/Stop/Exit** | Quick actions (Windows) |
+
+---
+
+## Build a standalone executable
+
+Ship it without requiring Python on the target machine using
+[PyInstaller](https://pyinstaller.org/). Build on the OS you want to target
+(PyInstaller does not cross-compile):
+
+```bash
+pip install .[dev]        # includes pyinstaller
+pyinstaller dontlockpc.spec
+```
+
+The bundled app appears in `dist/`:
+
+- **Windows** → `dist/DontLockMyPC.exe` (windowed, no console)
+- **macOS** → `dist/DontLockMyPC.app`
 
 ---
 
@@ -128,6 +153,7 @@ do-not-lock-my-system/
 │   ├── __init__.py          # package metadata / version
 │   ├── __main__.py          # `python -m dontlockpc`
 │   ├── app.py               # Tkinter UI + keep-alive orchestrator
+│   ├── autostart.py         # cross-platform "run at login" management
 │   ├── tray.py              # system-tray wrapper (graceful degradation)
 │   └── backends/
 │       ├── __init__.py      # get_backend() platform factory
@@ -135,8 +161,10 @@ do-not-lock-my-system/
 │       ├── windows.py       # Win32 ctypes implementation
 │       └── macos.py         # caffeinate + Quartz implementation
 ├── tests/test_backends.py   # backend factory + contract tests
+├── docs/screenshot.svg      # UI preview used in this README
 ├── .github/                 # CI workflow, issue/PR templates
 ├── dont_lock_pc.py          # legacy launcher shim
+├── dontlockpc.spec          # PyInstaller build spec (standalone exe/app)
 ├── pyproject.toml           # packaging + tooling config
 ├── requirements.txt         # runtime deps (with platform markers)
 ├── requirements-dev.txt     # dev deps (ruff, pytest)
