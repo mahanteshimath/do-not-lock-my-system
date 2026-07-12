@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-07-13
+
+### Added
+- **Start at login** — an in-app "Start automatically at login" toggle backed by
+  a new cross-platform `autostart` module (Windows `Run` registry key / macOS
+  LaunchAgent).
+- **Standalone build** — a checked-in `dontlockpc.spec` for PyInstaller that
+  produces a windowed `DontLockMyPC.exe` (Windows) or `DontLockMyPC.app`
+  (macOS); `pyinstaller` added to the dev extras.
+- **UI preview** — `docs/screenshot.svg` embedded in the README.
+
 ### Changed
 - Repositioned the app around its core use case: **keeping the system awake and
   unlocked while long-running AI agents work.** Updated README, in-app subtitle,
@@ -35,4 +46,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Windows Win32 logic now lives in `backends/windows.py`.
 - UI now uses platform-appropriate fonts and a native title bar on macOS.
 
+[1.1.0]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.1.0
 [1.0.0]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.0.0

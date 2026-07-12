@@ -39,6 +39,7 @@ htmlcov/
 *.swp
 .DS_Store
 
-# PyInstaller
+# PyInstaller (keep the checked-in build spec: dontlockpc.spec)
 *.manifest
 *.spec
+!dontlockpc.spec
