@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-07-13
+
 ### Added
 - **Automated release builds** — a GitHub Actions `Release` workflow that, on
   every `v*` tag, builds the standalone `DontLockMyPC.exe` (Windows) and
@@ -52,5 +54,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Windows Win32 logic now lives in `backends/windows.py`.
 - UI now uses platform-appropriate fonts and a native title bar on macOS.
 
+[1.1.1]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.1.1
 [1.1.0]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.1.0
 [1.0.0]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.0.0
