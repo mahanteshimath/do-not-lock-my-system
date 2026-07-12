@@ -69,7 +69,7 @@ class DontLockPC:
         self.root.geometry("420x480")
         self.root.resizable(False, False)
         self.root.configure(bg=self.BG)
-        self.root.protocol("WM_DELETE_WINDOW", self.minimize_to_tray)
+        self.root.protocol("WM_DELETE_WINDOW", self.quit_app)
 
         self._offset_x = 0
         self._offset_y = 0
@@ -250,9 +250,9 @@ class DontLockPC:
         footer = tk.Frame(content, bg=self.BG)
         footer.pack(side=tk.BOTTOM, fill=tk.X, pady=(12, 4))
         footer_text = (
-            "Closes to tray  \u2022  Right-click tray icon for menu"
+            "\u2715 exits  \u2022  \u2500 hides to tray (right-click for menu)"
             if self.tray.supported
-            else "Closes to the Dock  \u2022  keep-alive keeps running"
+            else "\u2715 exits  \u2022  \u2500 minimizes to the Dock"
         )
         tk.Label(
             footer, text=footer_text, bg=self.BG, fg=self.DIM, font=(FONT, 8)
@@ -282,7 +282,7 @@ class DontLockPC:
             cursor="hand2",
         )
         close_btn.pack(side=tk.RIGHT, padx=4)
-        close_btn.bind("<Button-1>", lambda e: self.minimize_to_tray())
+        close_btn.bind("<Button-1>", lambda e: self.quit_app())
         close_btn.bind("<Enter>", lambda e: close_btn.config(fg=self.RED))
         close_btn.bind("<Leave>", lambda e: close_btn.config(fg=self.DIM))
 
@@ -295,7 +295,7 @@ class DontLockPC:
             cursor="hand2",
         )
         minimize_btn.pack(side=tk.RIGHT)
-        minimize_btn.bind("<Button-1>", lambda e: self._minimize_window())
+        minimize_btn.bind("<Button-1>", lambda e: self.minimize_to_tray())
         minimize_btn.bind("<Enter>", lambda e: minimize_btn.config(fg=self.TEXT))
         minimize_btn.bind("<Leave>", lambda e: minimize_btn.config(fg=self.DIM))
 
