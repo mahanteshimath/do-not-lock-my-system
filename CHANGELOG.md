@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Automated release builds** — a GitHub Actions `Release` workflow that, on
+  every `v*` tag, builds the standalone `DontLockMyPC.exe` (Windows) and
+  `DontLockMyPC.app` (macOS) with PyInstaller, zips them, and attaches them to
+  the published GitHub Release.
+
 ## [1.1.0] - 2026-07-13
 
 ### Added
