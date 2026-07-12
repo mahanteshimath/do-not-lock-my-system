@@ -64,7 +64,7 @@ class DontLockPC:
         self.root = tk.Tk()
         self.root.title("\u26a1 Don't Lock My PC")
         self.root.geometry("460x580")
-        self.root.minsize(360, 470)
+        self.root.minsize(240, 300)
         self.root.resizable(True, True)
         self.root.configure(bg=self.BG)
         self.root.protocol("WM_DELETE_WINDOW", self.quit_app)
