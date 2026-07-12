@@ -54,9 +54,6 @@ class DontLockPC:
         self.move_count = 0
         self._pulse_state = False
 
-        # Use a custom frameless title bar only where it behaves well (Windows).
-        self._frameless = IS_WINDOWS
-
         self.tray = SystemTray(
             on_show=self.show_window,
             on_start=self.start,
@@ -65,16 +62,12 @@ class DontLockPC:
         )
 
         self.root = tk.Tk()
-        self.root.title("Don't Lock My PC")
-        self.root.geometry("420x480")
-        self.root.resizable(False, False)
+        self.root.title("\u26a1 Don't Lock My PC")
+        self.root.geometry("460x580")
+        self.root.minsize(360, 470)
+        self.root.resizable(True, True)
         self.root.configure(bg=self.BG)
         self.root.protocol("WM_DELETE_WINDOW", self.quit_app)
-
-        self._offset_x = 0
-        self._offset_y = 0
-        if self._frameless:
-            self.root.overrideredirect(True)
 
         self._build_ui()
         self._center_window()
@@ -82,8 +75,8 @@ class DontLockPC:
         self.root.attributes("-topmost", True)
         self.root.after(200, lambda: self.root.attributes("-topmost", False))
         self.root.focus_force()
-        if self._frameless:
-            self.root.bind("<Map>", self._on_map)
+        # A native minimize sends the app to the system tray where supported.
+        self.root.bind("<Unmap>", self._on_unmap)
 
     # -- window helpers ----------------------------------------------------
 
@@ -96,27 +89,28 @@ class DontLockPC:
         self.root.geometry(f"+{x}+{y}")
 
     def _build_ui(self) -> None:
-        if self._frameless:
-            self._build_title_bar()
-
         content = tk.Frame(self.root, bg=self.BG)
-        content.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)
+        content.pack(fill=tk.BOTH, expand=True, padx=24, pady=16)
+        content.columnconfigure(0, weight=1)
+        # Flexible top/bottom rows keep the controls vertically centered
+        content.rowconfigure(0, weight=1)
+        content.rowconfigure(6, weight=1)
 
         # Header
         tk.Label(
             content,
-            text="Keep Awake",
+            text="\u26a1 Keep Awake",
             bg=self.BG,
             fg=self.TEXT,
-            font=(FONT_SEMIBOLD, 22),
-        ).pack(pady=(20, 2))
+            font=(FONT_SEMIBOLD, 24),
+        ).grid(row=1, column=0, sticky="ew", pady=(0, 2))
         tk.Label(
             content,
             text="Keeps AI agents running — no lock, sleep or display-off",
             bg=self.BG,
             fg=self.DIM,
             font=(FONT, 9),
-        ).pack()
+        ).grid(row=2, column=0, sticky="ew", pady=(0, 18))
 
         # Status card
         self.card = tk.Frame(
@@ -125,7 +119,7 @@ class DontLockPC:
             highlightbackground=self.DIM,
             highlightthickness=1,
         )
-        self.card.pack(fill=tk.X, pady=20, ipady=16)
+        self.card.grid(row=3, column=0, sticky="ew", ipady=18)
 
         status_row = tk.Frame(self.card, bg=self.CARD)
         status_row.pack(pady=(12, 4))
@@ -177,7 +171,7 @@ class DontLockPC:
 
         # Interval control
         interval_frame = tk.Frame(content, bg=self.BG)
-        interval_frame.pack(pady=(0, 12))
+        interval_frame.grid(row=4, column=0, pady=(18, 12))
 
         tk.Label(
             interval_frame,
@@ -209,7 +203,7 @@ class DontLockPC:
 
         # Action buttons
         btn_frame = tk.Frame(content, bg=self.BG)
-        btn_frame.pack(pady=8, fill=tk.X)
+        btn_frame.grid(row=5, column=0, sticky="ew", pady=8)
 
         self.start_btn = tk.Button(
             btn_frame,
@@ -248,56 +242,17 @@ class DontLockPC:
 
         # Footer
         footer = tk.Frame(content, bg=self.BG)
-        footer.pack(side=tk.BOTTOM, fill=tk.X, pady=(12, 4))
-        footer_text = (
-            "\u2715 exits  \u2022  \u2500 hides to tray (right-click for menu)"
-            if self.tray.supported
-            else "\u2715 exits  \u2022  \u2500 minimizes to the Dock"
-        )
+        footer.grid(row=7, column=0, sticky="ew", pady=(16, 0))
+        footer.columnconfigure(0, weight=1)
+        if self.tray.supported:
+            footer_text = "\u2715 exits  \u2022  \u2500 minimize hides to the tray"
+        elif IS_MACOS:
+            footer_text = "\u2715 exits  \u2022  \u2500 minimizes to the Dock"
+        else:
+            footer_text = "\u2715 exits  \u2022  \u2500 minimizes to the taskbar"
         tk.Label(
             footer, text=footer_text, bg=self.BG, fg=self.DIM, font=(FONT, 8)
-        ).pack()
-
-    def _build_title_bar(self) -> None:
-        title_bar = tk.Frame(self.root, bg=self.SURFACE, height=36)
-        title_bar.pack(fill=tk.X)
-        title_bar.pack_propagate(False)
-        title_bar.bind("<Button-1>", self._start_drag)
-        title_bar.bind("<B1-Motion>", self._on_drag)
-
-        tk.Label(
-            title_bar,
-            text="  \u26a1 Don't Lock My PC",
-            bg=self.SURFACE,
-            fg=self.SUBTEXT,
-            font=(FONT, 9),
-        ).pack(side=tk.LEFT, padx=4)
-
-        close_btn = tk.Label(
-            title_bar,
-            text=" \u2715 ",
-            bg=self.SURFACE,
-            fg=self.DIM,
-            font=(FONT, 11),
-            cursor="hand2",
-        )
-        close_btn.pack(side=tk.RIGHT, padx=4)
-        close_btn.bind("<Button-1>", lambda e: self.quit_app())
-        close_btn.bind("<Enter>", lambda e: close_btn.config(fg=self.RED))
-        close_btn.bind("<Leave>", lambda e: close_btn.config(fg=self.DIM))
-
-        minimize_btn = tk.Label(
-            title_bar,
-            text=" \u2500 ",
-            bg=self.SURFACE,
-            fg=self.DIM,
-            font=(FONT, 11),
-            cursor="hand2",
-        )
-        minimize_btn.pack(side=tk.RIGHT)
-        minimize_btn.bind("<Button-1>", lambda e: self.minimize_to_tray())
-        minimize_btn.bind("<Enter>", lambda e: minimize_btn.config(fg=self.TEXT))
-        minimize_btn.bind("<Leave>", lambda e: minimize_btn.config(fg=self.DIM))
+        ).grid(row=0, column=0, sticky="ew")
 
     def _draw_pulse(self, color: str) -> None:
         self.pulse_canvas.delete("all")
@@ -312,22 +267,16 @@ class DontLockPC:
         self.root.after(800, self._animate_pulse)
 
     def _minimize_window(self) -> None:
-        if self._frameless:
-            self.root.overrideredirect(False)
         self.root.iconify()
 
-    def _on_map(self, event) -> None:
-        if self.root.state() == "normal":
-            self.root.overrideredirect(True)
-
-    def _start_drag(self, event) -> None:
-        self._offset_x = event.x
-        self._offset_y = event.y
-
-    def _on_drag(self, event) -> None:
-        x = self.root.winfo_pointerx() - self._offset_x
-        y = self.root.winfo_pointery() - self._offset_y
-        self.root.geometry(f"+{x}+{y}")
+    def _on_unmap(self, event) -> None:
+        # Route a native minimize to the system tray when it's available.
+        if (
+            event.widget is self.root
+            and self.root.state() == "iconic"
+            and self.tray.supported
+        ):
+            self.minimize_to_tray()
 
     # -- tray / lifecycle --------------------------------------------------
 
