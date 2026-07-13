@@ -36,7 +36,6 @@ class DontLockPC:
 
     # Color palette (Catppuccin Mocha-inspired)
     BG = "#11111b"
-    SURFACE = "#1e1e2e"
     CARD = "#181825"
     TEXT = "#cdd6f4"
     SUBTEXT = "#a6adc8"
@@ -44,7 +43,6 @@ class DontLockPC:
     GREEN = "#a6e3a1"
     RED = "#f38ba8"
     TEAL = "#94e2d5"
-    BLUE = "#89b4fa"
 
     def __init__(self) -> None:
         self.backend = get_backend()
