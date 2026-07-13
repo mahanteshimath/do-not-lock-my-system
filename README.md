@@ -49,6 +49,14 @@ small backend abstraction that is selected automatically at runtime.
 > macOS, `caffeinate` handles sleep while the Quartz events keep the session
 > active.
 
+> **Closing the laptop lid:** the keep-awake APIs above do **not** stop a
+> lid-close sleep. On Windows, enable **“Stay awake even with the lid closed”**
+> and the app temporarily changes the active power plan's lid-close action to
+> *Do nothing* while running, then restores your original setting on STOP/exit.
+> On macOS, clamshell sleep is enforced by firmware and can only be disabled
+> with `sudo pmset -a disablesleep 1`, so the app does not change it
+> automatically.
+
 ### Typical use cases
 
 - Running an **AI coding agent** or automation that takes many minutes/hours
@@ -69,6 +77,9 @@ small backend abstraction that is selected automatically at runtime.
 - **Configurable interval** — set the keep-alive frequency (default: 30s)
 - **Start at login** — optional autostart (Windows registry `Run` key / macOS
   LaunchAgent) so it's ready before your next agent run
+- **Stay awake with the lid closed** (Windows) — optionally overrides the power
+  plan's "lid close" action so shutting the lid won't sleep the machine; the
+  original setting is restored automatically on **STOP**/exit
 - **Live status dashboard** — pulse animation, signal counter, last-signal time
 - **Zero footprint** — invisible F15 key and ±1px mouse moves; no interference
 - **Proper Python packaging** — `pip install .`, `dontlockpc` console command
@@ -123,6 +134,7 @@ python dont_lock_pc.py  # legacy launcher (compatibility shim)
 | **Close (✕)** | Windows: minimizes to tray · macOS: minimizes to Dock |
 | **Interval field** | Signal frequency in seconds (editable when stopped) |
 | **Start automatically at login** | Toggles autostart (Windows `Run` key / macOS LaunchAgent) |
+| **Stay awake even with the lid closed** | Windows: keeps the system awake when the lid is shut (restored on STOP) |
 | **Tray → Show/Start/Stop/Exit** | Quick actions (Windows) |
 
 ---

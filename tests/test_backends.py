@@ -34,5 +34,24 @@ def test_get_backend_unsupported(monkeypatch):
 def test_backend_implements_contract():
     """The backend for the current platform must expose the full interface."""
     backend = get_backend()
-    for method in ("prevent_sleep", "allow_sleep", "nudge", "close"):
+    for method in (
+        "prevent_sleep",
+        "allow_sleep",
+        "nudge",
+        "prevent_lid_sleep",
+        "restore_lid_sleep",
+        "close",
+    ):
         assert callable(getattr(backend, method))
+
+
+def test_windows_backend_supports_lid_close(monkeypatch):
+    monkeypatch.setattr("sys.platform", "win32")
+    backend = get_backend()
+    assert backend.lid_close_supported is True
+
+
+def test_macos_backend_no_lid_close(monkeypatch):
+    monkeypatch.setattr("sys.platform", "darwin")
+    backend = get_backend()
+    assert backend.lid_close_supported is False

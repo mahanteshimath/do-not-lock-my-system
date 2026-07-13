@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dontlockpc"
-version = "1.1.1"
+version = "1.2.0"
 description = "Keep your computer awake and unlocked while long-running AI agents work — a lightweight cross-platform (Windows + macOS) utility that prevents locking, sleeping, and display-off."
 readme = "README.md"
 requires-python = ">=3.9"

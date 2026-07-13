@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import ctypes
 import ctypes.wintypes
+import re
+import subprocess
 import time
 
 from .base import KeepAwakeBackend
@@ -28,6 +30,13 @@ INPUT_KEYBOARD = 1
 MOUSEEVENTF_MOVE = 0x0001
 KEYEVENTF_KEYUP = 0x0002
 VK_F15 = 0x7E  # F15 — no visible side effects
+
+# powercfg identifiers for the "lid close action" power setting.
+_SUB_BUTTONS = "4f971e89-eebd-4455-a8de-9e59040e7347"
+_LIDACTION = "5ca83367-6e45-459f-a27b-476b1d01c936"
+_LID_DO_NOTHING = "0"  # 0=Do nothing, 1=Sleep, 2=Hibernate, 3=Shut down
+# Hide the console window when shelling out to powercfg.
+_NO_WINDOW = 0x08000000
 
 
 class MOUSEINPUT(ctypes.Structure):
@@ -71,6 +80,11 @@ class WindowsBackend(KeepAwakeBackend):
     """Keep-awake implementation for Windows via Win32 ``ctypes`` calls."""
 
     name = "windows"
+    lid_close_supported = True
+
+    def __init__(self) -> None:
+        # Saved lid-close action indexes (AC, DC) captured before override.
+        self._saved_lid: tuple[str, str] | None = None
 
     def prevent_sleep(self) -> None:
         ctypes.windll.kernel32.SetThreadExecutionState(
@@ -83,6 +97,60 @@ class WindowsBackend(KeepAwakeBackend):
     def nudge(self) -> None:
         self._simulate_mouse_move()
         self._simulate_key_press()
+
+    # -- lid-close override -------------------------------------------------
+
+    def prevent_lid_sleep(self) -> bool:
+        """Set the active power plan's lid-close action to "Do nothing".
+
+        Remembers the previous AC/DC values so :meth:`restore_lid_sleep` can
+        put them back. Returns ``True`` on success.
+        """
+        try:
+            if self._saved_lid is None:
+                self._saved_lid = self._query_lid_action()
+            self._set_lid_action(_LID_DO_NOTHING, _LID_DO_NOTHING)
+            return True
+        except Exception:
+            return False
+
+    def restore_lid_sleep(self) -> None:
+        if self._saved_lid is None:
+            return
+        ac, dc = self._saved_lid
+        try:
+            self._set_lid_action(ac, dc)
+        except Exception:
+            pass
+        finally:
+            self._saved_lid = None
+
+    def _powercfg(self, *args: str) -> str:
+        result = subprocess.run(
+            ["powercfg", *args],
+            capture_output=True,
+            text=True,
+            creationflags=_NO_WINDOW,
+            check=True,
+        )
+        return result.stdout
+
+    def _query_lid_action(self) -> tuple[str, str]:
+        out = self._powercfg("/query", "SCHEME_CURRENT", _SUB_BUTTONS, _LIDACTION)
+        ac = re.search(r"Current AC Power Setting Index:\s*0x([0-9a-fA-F]+)", out)
+        dc = re.search(r"Current DC Power Setting Index:\s*0x([0-9a-fA-F]+)", out)
+        ac_val = str(int(ac.group(1), 16)) if ac else _LID_DO_NOTHING
+        dc_val = str(int(dc.group(1), 16)) if dc else _LID_DO_NOTHING
+        return ac_val, dc_val
+
+    def _set_lid_action(self, ac: str, dc: str) -> None:
+        self._powercfg(
+            "/setacvalueindex", "SCHEME_CURRENT", _SUB_BUTTONS, _LIDACTION, ac
+        )
+        self._powercfg(
+            "/setdcvalueindex", "SCHEME_CURRENT", _SUB_BUTTONS, _LIDACTION, dc
+        )
+        self._powercfg("/setactive", "SCHEME_CURRENT")
 
     # -- internals ---------------------------------------------------------
 

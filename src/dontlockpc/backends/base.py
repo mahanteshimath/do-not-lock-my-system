@@ -19,6 +19,9 @@ class KeepAwakeBackend(ABC):
     #: Human-readable backend name (overridden by subclasses).
     name: str = "base"
 
+    #: Whether this backend can keep the system awake with the lid closed.
+    lid_close_supported: bool = False
+
     @abstractmethod
     def prevent_sleep(self) -> None:
         """Tell the OS not to sleep or turn off the display.
@@ -39,6 +42,24 @@ class KeepAwakeBackend(ABC):
     def nudge(self) -> None:
         """Emit a tiny, invisible input event to reset the lock timer."""
 
+    def prevent_lid_sleep(self) -> bool:
+        """Keep the system awake even when the laptop lid is closed.
+
+        This overrides the OS "lid close action" so shutting the lid no longer
+        sleeps the machine. The previous setting is remembered so it can be
+        restored by :meth:`restore_lid_sleep`.
+
+        Returns:
+            ``True`` if the override was applied, ``False`` if the platform
+            does not support it or the change failed.
+        """
+        return False
+
+    def restore_lid_sleep(self) -> None:  # noqa: B027 - optional no-op hook
+        """Restore the original lid-close behaviour saved by
+        :meth:`prevent_lid_sleep`. Safe to call when nothing was changed."""
+
     def close(self) -> None:
         """Release any resources held by the backend."""
+        self.restore_lid_sleep()
         self.allow_sleep()

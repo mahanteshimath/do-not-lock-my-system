@@ -241,11 +241,38 @@ class DontLockPC:
         )
         self.stop_btn.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=(4, 0))
 
+        # Options (lid-close + run-at-login)
+        options = tk.Frame(content, bg=self.BG)
+        options.grid(row=6, column=0, sticky="ew", pady=(6, 0))
+        options.columnconfigure(0, weight=1)
+        opt_row = 0
+
+        if self.backend.lid_close_supported:
+            self.lid_var = tk.BooleanVar(value=True)
+            self.lid_check = tk.Checkbutton(
+                options,
+                text="Stay awake even with the lid closed",
+                variable=self.lid_var,
+                command=self._toggle_lid,
+                bg=self.BG,
+                fg=self.SUBTEXT,
+                activebackground=self.BG,
+                activeforeground=self.TEXT,
+                selectcolor=self.CARD,
+                font=(FONT, 9),
+                bd=0,
+                highlightthickness=0,
+                cursor="hand2",
+                anchor="center",
+            )
+            self.lid_check.grid(row=opt_row, column=0, sticky="ew")
+            opt_row += 1
+
         # Run at login
         if autostart.supported():
             self.autostart_var = tk.BooleanVar(value=autostart.is_enabled())
             self.autostart_check = tk.Checkbutton(
-                content,
+                options,
                 text="Start automatically at login",
                 variable=self.autostart_var,
                 command=self._toggle_autostart,
@@ -260,7 +287,8 @@ class DontLockPC:
                 cursor="hand2",
                 anchor="center",
             )
-            self.autostart_check.grid(row=6, column=0, sticky="ew", pady=(6, 0))
+            self.autostart_check.grid(row=opt_row, column=0, sticky="ew", pady=(2, 0))
+            opt_row += 1
 
         # Footer
         footer = tk.Frame(content, bg=self.BG)
@@ -275,6 +303,19 @@ class DontLockPC:
         tk.Label(
             footer, text=footer_text, bg=self.BG, fg=self.DIM, font=(FONT, 8)
         ).grid(row=0, column=0, sticky="ew")
+        if self.backend.lid_close_supported:
+            tk.Label(
+                footer,
+                text=(
+                    "Lid-closed stay-awake changes the power plan while running "
+                    "and restores it on STOP/exit."
+                ),
+                bg=self.BG,
+                fg=self.DIM,
+                font=(FONT, 8),
+                wraplength=380,
+                justify="center",
+            ).grid(row=1, column=0, sticky="ew", pady=(4, 0))
 
     def _draw_pulse(self, color: str) -> None:
         self.pulse_canvas.delete("all")
@@ -293,6 +334,17 @@ class DontLockPC:
         if not autostart.set_enabled(want):
             # Revert the checkbox if the OS change could not be applied.
             self.autostart_var.set(not want)
+
+    def _toggle_lid(self) -> None:
+        # Only apply/restore live while running; otherwise it takes effect on
+        # the next START.
+        if not self.running:
+            return
+        if self.lid_var.get():
+            if not self.backend.prevent_lid_sleep():
+                self.lid_var.set(False)
+        else:
+            self.backend.restore_lid_sleep()
 
     def _minimize_window(self) -> None:
         self.root.iconify()
@@ -344,6 +396,11 @@ class DontLockPC:
         self.interval_entry.config(state=tk.DISABLED)
         self.tray.set_active(True)
 
+        # Optionally keep the system awake with the lid closed.
+        if getattr(self, "lid_var", None) is not None and self.lid_var.get():
+            if not self.backend.prevent_lid_sleep():
+                self.lid_var.set(False)
+
         self._animate_pulse()
         self.thread = threading.Thread(target=self._keep_alive, daemon=True)
         self.thread.start()
@@ -357,6 +414,8 @@ class DontLockPC:
         self.stop_btn.config(state=tk.DISABLED, bg=self.CARD, fg=self.DIM)
         self.interval_entry.config(state=tk.NORMAL)
         self.tray.set_active(False)
+        # Restore the original lid-close behaviour.
+        self.backend.restore_lid_sleep()
 
     # -- keep-alive worker -------------------------------------------------
 
