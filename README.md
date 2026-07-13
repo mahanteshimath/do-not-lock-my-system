@@ -10,7 +10,7 @@ uninterrupted, then lets the machine sleep normally when you stop it.
 > **Motto:** *While AI agents are working, your system should never lock or sleep.*
 
 <p align="center">
-  <img src="docs/screenshot.svg" alt="Don't Lock My PC — app window" width="360">
+  <img src="docs/screenshot.png" alt="Don't Lock My PC — app window" width="360">
 </p>
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python&logoColor=white)
@@ -173,7 +173,7 @@ do-not-lock-my-system/
 │       ├── windows.py       # Win32 ctypes implementation
 │       └── macos.py         # caffeinate + Quartz implementation
 ├── tests/test_backends.py   # backend factory + contract tests
-├── docs/screenshot.svg      # UI preview used in this README
+├── docs/screenshot.png      # UI preview used in this README
 ├── .github/                 # CI workflow, issue/PR templates
 ├── dont_lock_pc.py          # legacy launcher shim
 ├── dontlockpc.spec          # PyInstaller build spec (standalone exe/app)
