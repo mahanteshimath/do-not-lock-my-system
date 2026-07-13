@@ -33,10 +33,15 @@
   <rect x="236" y="366" width="200" height="40" rx="6" fill="#f38ba8"/>
   <text x="336" y="391" fill="#11111b" font-size="12" font-weight="600" text-anchor="middle">⏹  STOP</text>
 
+  <!-- Lid-closed checkbox -->
+  <rect x="132" y="424" width="14" height="14" rx="3" fill="#181825" stroke="#585b70"/>
+  <path d="M135 431 l3 3 l5 -6" fill="none" stroke="#a6e3a1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="154" y="436" fill="#a6adc8" font-size="11">Stay awake even with the lid closed</text>
+
   <!-- Autostart checkbox -->
-  <rect x="150" y="432" width="14" height="14" rx="3" fill="#181825" stroke="#585b70"/>
-  <path d="M153 439 l3 3 l5 -6" fill="none" stroke="#a6e3a1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="172" y="444" fill="#a6adc8" font-size="11">Start automatically at login</text>
+  <rect x="150" y="448" width="14" height="14" rx="3" fill="#181825" stroke="#585b70"/>
+  <path d="M153 455 l3 3 l5 -6" fill="none" stroke="#a6e3a1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="172" y="460" fill="#a6adc8" font-size="11">Start automatically at login</text>
 
   <!-- Footer -->
   <text x="230" y="556" fill="#585b70" font-size="10" text-anchor="middle">✕ exits  •  ─ minimize hides to the tray</text>
