@@ -10,6 +10,7 @@ import sys
 import threading
 import time
 import tkinter as tk
+import webbrowser
 from datetime import datetime
 
 from . import autostart
@@ -314,6 +315,30 @@ class DontLockPC:
                 wraplength=380,
                 justify="center",
             ).grid(row=1, column=0, sticky="ew", pady=(4, 0))
+
+        # Credit
+        credit = tk.Frame(footer, bg=self.BG)
+        credit.grid(row=2, column=0, pady=(8, 0))
+        tk.Label(
+            credit,
+            text="Developed with ❤\ufe0f by ",
+            bg=self.BG,
+            fg=self.DIM,
+            font=(FONT, 8),
+        ).pack(side=tk.LEFT)
+        link = tk.Label(
+            credit,
+            text="MAHANTESH HIREMATH",
+            bg=self.BG,
+            fg=self.TEAL,
+            font=(FONT, 8, "underline"),
+            cursor="hand2",
+        )
+        link.pack(side=tk.LEFT)
+        link.bind(
+            "<Button-1>",
+            lambda _e: webbrowser.open("https://bit.ly/atozaboutdata"),
+        )
 
     def _draw_pulse(self, color: str) -> None:
         self.pulse_canvas.delete("all")
