@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-07-13
+
+### Added
+- **Developer credit** — a footer credit line with a clickable link.
+
+### Removed
+- Unused color constants (`SURFACE`, `BLUE`) from the UI palette.
+
 ## [1.2.0] - 2026-07-13
 
 ### Added
@@ -64,6 +72,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Windows Win32 logic now lives in `backends/windows.py`.
 - UI now uses platform-appropriate fonts and a native title bar on macOS.
 
+[1.2.1]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.2.1
 [1.2.0]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.2.0
 [1.1.1]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.1.1
 [1.1.0]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.1.0
