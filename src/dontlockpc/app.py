@@ -318,20 +318,26 @@ class DontLockPC:
 
         # Credit
         credit = tk.Frame(footer, bg=self.BG)
-        credit.grid(row=2, column=0, pady=(8, 0))
+        credit.grid(row=2, column=0, pady=(10, 0))
         tk.Label(
             credit,
-            text="Developed with ❤\ufe0f by ",
+            text="Developed with ",
             bg=self.BG,
             fg=self.DIM,
             font=(FONT, 8),
         ).pack(side=tk.LEFT)
+        tk.Label(credit, text="\u2665", bg=self.BG, fg=self.RED, font=(FONT, 9)).pack(
+            side=tk.LEFT
+        )
+        tk.Label(credit, text=" by ", bg=self.BG, fg=self.DIM, font=(FONT, 8)).pack(
+            side=tk.LEFT
+        )
         link = tk.Label(
             credit,
             text="MAHANTESH HIREMATH",
             bg=self.BG,
             fg=self.TEAL,
-            font=(FONT, 8, "underline"),
+            font=(FONT_SEMIBOLD, 8, "underline"),
             cursor="hand2",
         )
         link.pack(side=tk.LEFT)
@@ -339,6 +345,8 @@ class DontLockPC:
             "<Button-1>",
             lambda _e: webbrowser.open("https://bit.ly/atozaboutdata"),
         )
+        link.bind("<Enter>", lambda _e: link.config(fg=self.GREEN))
+        link.bind("<Leave>", lambda _e: link.config(fg=self.TEAL))
 
     def _draw_pulse(self, color: str) -> None:
         self.pulse_canvas.delete("all")
