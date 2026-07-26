@@ -13,11 +13,41 @@ uninterrupted, then lets the machine sleep normally when you stop it.
   <img src="docs/screenshot.png" alt="Don't Lock My PC — app window" width="360">
 </p>
 
-![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python&logoColor=white)
-![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS-555?logo=apple&logoColor=white)
-![UI](https://img.shields.io/badge/UI-Tkinter-orange)
-![License](https://img.shields.io/badge/License-MIT-green)
-![Theme](https://img.shields.io/badge/Theme-Catppuccin%20Mocha-b4befe)
+<p align="center">
+  <a href="https://github.com/mahanteshimath/do-not-lock-my-system/actions/workflows/ci.yml"><img src="https://github.com/mahanteshimath/do-not-lock-my-system/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
+  <a href="https://github.com/mahanteshimath/do-not-lock-my-system/releases/latest"><img src="https://img.shields.io/github/v/release/mahanteshimath/do-not-lock-my-system?display_name=tag&sort=semver" alt="Latest release"></a>
+  <a href="https://github.com/mahanteshimath/do-not-lock-my-system/releases"><img src="https://img.shields.io/github/downloads/mahanteshimath/do-not-lock-my-system/total" alt="Downloads"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/mahanteshimath/do-not-lock-my-system" alt="License"></a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.9%2B-blue?logo=python&logoColor=white" alt="Python 3.9+">
+  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS-555?logo=apple&logoColor=white" alt="Platform">
+  <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"></a>
+  <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs welcome"></a>
+  <a href="https://github.com/mahanteshimath/do-not-lock-my-system/stargazers"><img src="https://img.shields.io/github/stars/mahanteshimath/do-not-lock-my-system?style=social" alt="GitHub stars"></a>
+</p>
+
+---
+
+## Table of contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Installation](#installation)
+- [Set up & run programmatically](#set-up--run-programmatically)
+- [Usage](#usage)
+- [Build a standalone executable](#build-a-standalone-executable)
+- [Project structure](#project-structure)
+- [Architecture](#architecture)
+- [Development](#development)
+- [Roadmap](#roadmap)
+- [Limitations](#limitations)
+- [Contributing](#contributing)
+- [Security](#security)
+- [Support](#support)
+- [Acknowledgments](#acknowledgments)
+- [License](#license)
 
 ---
 
@@ -381,6 +411,23 @@ platform backend.
 
 ---
 
+## Roadmap
+
+- [x] Cross-platform keep-awake (Windows + macOS)
+- [x] System-tray integration (Windows)
+- [x] Run at login (autostart)
+- [x] Stay awake with the lid closed (Windows)
+- [x] Scheduled Sleep / Hibernate / Shutdown timer
+- [x] Standalone binaries via PyInstaller + automated GitHub Releases
+- [ ] **Linux** backend (X11/Wayland + systemd-inhibit / logind)
+- [ ] Publish to **PyPI** (`pip install dontlockpc`)
+- [ ] Menu-bar tray on macOS
+- [ ] Optional force-true-sleep on Windows (bypass hibernate)
+
+Have an idea? [Open an issue](https://github.com/mahanteshimath/do-not-lock-my-system/issues/new/choose).
+
+---
+
 ## Limitations
 
 - **Windows & macOS only.** The backend abstraction makes Linux support
@@ -394,6 +441,57 @@ platform backend.
 
 ---
 
+## Contributing
+
+Contributions of all kinds are welcome — bug reports, feature requests, docs,
+and code. Good first steps:
+
+1. Read [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md).
+2. Fork the repo and create a feature branch.
+3. Run the quality gate before pushing: `ruff check .`, `ruff format .`, `pytest`.
+4. Open a pull request describing **what** changed and **why**.
+
+Every PR runs CI (lint + tests on Windows and macOS). See the
+[open issues](https://github.com/mahanteshimath/do-not-lock-my-system/issues)
+for things to pick up.
+
+---
+
+## Security
+
+Please **do not** report security issues in public GitHub issues. Instead, use
+GitHub's private
+[**Report a vulnerability**](https://github.com/mahanteshimath/do-not-lock-my-system/security/advisories/new)
+workflow (Security → Advisories). See [SECURITY.md](SECURITY.md) for the full
+policy. The app runs locally with your own privileges and makes no network
+calls; the lid-close and power features change local OS power settings only,
+and restore them on stop.
+
+---
+
+## Support
+
+- 🐛 **Bugs / features:** [open an issue](https://github.com/mahanteshimath/do-not-lock-my-system/issues/new/choose)
+- 💬 **Questions / ideas:** start a [discussion](https://github.com/mahanteshimath/do-not-lock-my-system/discussions)
+- ⭐ If this saved an agent run, consider **starring** the repo — it helps others find it.
+
+---
+
+## Acknowledgments
+
+- [Catppuccin](https://github.com/catppuccin/catppuccin) — the Mocha color palette
+- [pystray](https://github.com/moses-palmer/pystray) + [Pillow](https://python-pillow.org/) — system-tray integration
+- [pyobjc](https://github.com/ronaldoussoren/pyobjc) — macOS Quartz bindings
+- [Ruff](https://github.com/astral-sh/ruff) + [pytest](https://pytest.org/) — linting and tests
+- [PyInstaller](https://pyinstaller.org/) — standalone binaries
+
+---
+
 ## License
 
-[MIT](LICENSE) © Don't Lock My PC contributors
+[MIT](LICENSE) © [Mahantesh Hiremath](https://bit.ly/atozaboutdata) and
+Don't Lock My PC contributors.
+
+<p align="center">
+  Developed with ❤️ by <a href="https://bit.ly/atozaboutdata">MAHANTESH HIREMATH</a>
+</p>
