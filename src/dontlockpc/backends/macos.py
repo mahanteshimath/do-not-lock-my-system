@@ -35,6 +35,9 @@ class MacOSBackend(KeepAwakeBackend):
 
     name = "macos"
 
+    #: macOS has no user-facing hibernate, so only sleep + shutdown.
+    power_actions = ("Sleep", "Shutdown")
+
     def __init__(self) -> None:
         self._caffeinate: subprocess.Popen | None = None
 
@@ -64,6 +67,19 @@ class MacOSBackend(KeepAwakeBackend):
             return
         self._move_mouse()
         self._press_f15()
+
+    def power_action(self, action: str) -> None:
+        if action == "Sleep":
+            subprocess.run(["pmset", "sleepnow"], check=False)
+        elif action == "Shutdown":
+            subprocess.run(
+                [
+                    "osascript",
+                    "-e",
+                    'tell application "System Events" to shut down',
+                ],
+                check=False,
+            )
 
     # -- internals ---------------------------------------------------------
 

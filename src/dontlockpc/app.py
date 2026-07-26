@@ -11,7 +11,7 @@ import threading
 import time
 import tkinter as tk
 import webbrowser
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from . import autostart
 from .backends import get_backend
@@ -53,6 +53,8 @@ class DontLockPC:
         self.last_move_time: str | None = None
         self.move_count = 0
         self._pulse_state = False
+        self._power_deadline: float | None = None
+        self._power_win: tk.Toplevel | None = None
 
         self.tray = SystemTray(
             on_show=self.show_window,
@@ -246,6 +248,57 @@ class DontLockPC:
         options.columnconfigure(0, weight=1)
         opt_row = 0
 
+        # Scheduled power action (Sleep / Hibernate / Shutdown after a time).
+        if self.backend.power_actions:
+            power = tk.Frame(options, bg=self.BG)
+            power.grid(row=opt_row, column=0, pady=(0, 8))
+            opt_row += 1
+            tk.Label(
+                power, text="Then", bg=self.BG, fg=self.SUBTEXT, font=(FONT, 9)
+            ).pack(side=tk.LEFT, padx=(0, 6))
+            self.power_action_var = tk.StringVar(value="Off")
+            self.power_menu = tk.OptionMenu(
+                power, self.power_action_var, "Off", *self.backend.power_actions
+            )
+            self.power_menu.config(
+                bg=self.CARD,
+                fg=self.TEXT,
+                activebackground=self.DIM,
+                activeforeground=self.TEXT,
+                highlightthickness=0,
+                bd=0,
+                font=(FONT, 9),
+                cursor="hand2",
+                width=8,
+            )
+            self.power_menu["menu"].config(bg=self.CARD, fg=self.TEXT)
+            self.power_menu.pack(side=tk.LEFT)
+            tk.Label(
+                power, text="after", bg=self.BG, fg=self.SUBTEXT, font=(FONT, 9)
+            ).pack(side=tk.LEFT, padx=6)
+            self.power_time_var = tk.StringVar(value="")
+            self.power_entry = tk.Entry(
+                power,
+                textvariable=self.power_time_var,
+                width=7,
+                font=(FONT_SEMIBOLD, 10),
+                bg=self.CARD,
+                fg=self.TEXT,
+                insertbackground=self.TEXT,
+                relief="flat",
+                justify="center",
+                highlightbackground=self.DIM,
+                highlightthickness=1,
+            )
+            self.power_entry.pack(side=tk.LEFT, ipady=2)
+            tk.Label(
+                power,
+                text="min / HH:MM",
+                bg=self.BG,
+                fg=self.DIM,
+                font=(FONT, 8),
+            ).pack(side=tk.LEFT, padx=(6, 0))
+
         if self.backend.lid_close_supported:
             self.lid_var = tk.BooleanVar(value=True)
             self.lid_check = tk.Checkbutton(
@@ -432,6 +485,18 @@ class DontLockPC:
             if not self.backend.prevent_lid_sleep():
                 self.lid_var.set(False)
 
+        # Arm the scheduled power action (only runs while keep-awake is active).
+        self._power_deadline = None
+        if getattr(self, "power_action_var", None) is not None:
+            if self.power_action_var.get() != "Off":
+                self._power_deadline = self._parse_power_deadline(
+                    self.power_time_var.get()
+                )
+            self.power_menu.config(state=tk.DISABLED)
+            self.power_entry.config(state=tk.DISABLED)
+        if self._power_deadline is not None:
+            self.root.after(1000, self._tick_power_timer)
+
         self._animate_pulse()
         self.thread = threading.Thread(target=self._keep_alive, daemon=True)
         self.thread.start()
@@ -447,6 +512,132 @@ class DontLockPC:
         self.tray.set_active(False)
         # Restore the original lid-close behaviour.
         self.backend.restore_lid_sleep()
+        # Disarm any scheduled power action and re-enable its controls.
+        self._power_deadline = None
+        self._cancel_power_warning()
+        if getattr(self, "power_menu", None) is not None:
+            self.power_menu.config(state=tk.NORMAL)
+            self.power_entry.config(state=tk.NORMAL)
+
+    # -- scheduled power action --------------------------------------------
+
+    @staticmethod
+    def _parse_power_deadline(text: str) -> float | None:
+        """Parse the timer field into an epoch deadline.
+
+        Accepts either a positive number of minutes (``"90"``) or a 24-hour
+        clock time (``"23:30"``, next occurrence). Returns ``None`` for blank
+        or invalid input, so a bad value simply disarms the timer.
+        """
+        text = text.strip()
+        if not text:
+            return None
+        if ":" in text:
+            try:
+                hh, mm = (int(x) for x in text.split(":", 1))
+            except ValueError:
+                return None
+            if not (0 <= hh < 24 and 0 <= mm < 60):
+                return None
+            now = datetime.now()
+            target = now.replace(hour=hh, minute=mm, second=0, microsecond=0)
+            if target <= now:
+                target += timedelta(days=1)
+            return target.timestamp()
+        try:
+            minutes = float(text)
+        except ValueError:
+            return None
+        if minutes <= 0:
+            return None
+        return time.time() + minutes * 60
+
+    def _tick_power_timer(self) -> None:
+        if not self.running or self._power_deadline is None:
+            return
+        if time.time() >= self._power_deadline:
+            self._power_deadline = None
+            self._begin_power_warning()
+            return
+        self.root.after(1000, self._tick_power_timer)
+
+    def _begin_power_warning(self, seconds: int = 30) -> None:
+        action = self.power_action_var.get()
+        if action == "Off":
+            return
+        win = tk.Toplevel(self.root)
+        self._power_win = win
+        win.title("Power action")
+        win.configure(bg=self.CARD)
+        win.resizable(False, False)
+        win.transient(self.root)
+        win.protocol("WM_DELETE_WINDOW", self._cancel_power_warning)
+
+        msg = tk.Label(
+            win,
+            bg=self.CARD,
+            fg=self.TEXT,
+            font=(FONT_SEMIBOLD, 11),
+            padx=24,
+            pady=(18, 6),
+        )
+        msg.pack()
+        tk.Button(
+            win,
+            text="Cancel",
+            command=self._cancel_power_warning,
+            bg=self.GREEN,
+            fg=self.BG,
+            activebackground=self.TEAL,
+            activeforeground=self.BG,
+            relief="flat",
+            cursor="hand2",
+            bd=0,
+            padx=24,
+            pady=6,
+            font=(FONT_SEMIBOLD, 10),
+        ).pack(pady=(0, 18))
+
+        def countdown(n: int) -> None:
+            if self._power_win is not win:
+                return  # cancelled
+            if n <= 0:
+                self._execute_power_action(action, win)
+                return
+            msg.config(text=f"System will {action.lower()} in {n}s")
+            win.after(1000, countdown, n - 1)
+
+        countdown(seconds)
+        win.update_idletasks()
+        x = self.root.winfo_x() + (self.root.winfo_width() - win.winfo_width()) // 2
+        y = self.root.winfo_y() + (self.root.winfo_height() - win.winfo_height()) // 2
+        win.geometry(f"+{max(x, 0)}+{max(y, 0)}")
+        win.lift()
+        win.grab_set()
+
+    def _cancel_power_warning(self) -> None:
+        win = self._power_win
+        self._power_win = None
+        if win is not None:
+            try:
+                win.grab_release()
+                win.destroy()
+            except Exception:
+                pass
+
+    def _execute_power_action(self, action: str, win: tk.Toplevel) -> None:
+        self._power_win = None
+        try:
+            win.grab_release()
+            win.destroy()
+        except Exception:
+            pass
+        # Release keep-awake so the OS can actually sleep/hibernate/shut down.
+        self.stop()
+        try:
+            self.backend.power_action(action)
+        except Exception:
+            pass
 
     # -- keep-alive worker -------------------------------------------------
 

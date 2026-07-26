@@ -80,6 +80,11 @@ small backend abstraction that is selected automatically at runtime.
 - **Stay awake with the lid closed** (Windows) — optionally overrides the power
   plan's "lid close" action so shutting the lid won't sleep the machine; the
   original setting is restored automatically on **STOP**/exit
+- **Scheduled power action** — optionally **Sleep**, **Hibernate** (Windows), or
+  **Shut down** the machine after a set time (in minutes, or at a `HH:MM` clock
+  time). It counts down while keep-awake is running — handy for "keep my PC awake
+  for the agent, then power it off when done." A 30-second cancelable warning
+  fires first so you can abort.
 - **Live status dashboard** — pulse animation, signal counter, last-signal time
 - **Zero footprint** — invisible F15 key and ±1px mouse moves; no interference
 - **Proper Python packaging** — `pip install .`, `dontlockpc` console command
@@ -135,6 +140,7 @@ python dont_lock_pc.py  # legacy launcher (compatibility shim)
 | **Interval field** | Signal frequency in seconds (editable when stopped) |
 | **Start automatically at login** | Toggles autostart (Windows `Run` key / macOS LaunchAgent) |
 | **Stay awake even with the lid closed** | Windows: keeps the system awake when the lid is shut (restored on STOP) |
+| **Then … after …** | Schedule Sleep / Hibernate / Shutdown once the time elapses (minutes or `HH:MM`); armed while running, with a 30s cancelable warning |
 | **Tray → Show/Start/Stop/Exit** | Quick actions (Windows) |
 
 ---

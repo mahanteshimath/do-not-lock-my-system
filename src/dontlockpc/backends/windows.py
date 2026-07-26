@@ -81,6 +81,7 @@ class WindowsBackend(KeepAwakeBackend):
 
     name = "windows"
     lid_close_supported = True
+    power_actions = ("Sleep", "Hibernate", "Shutdown")
 
     def __init__(self) -> None:
         # Saved lid-close action indexes (AC, DC) captured before override.
@@ -124,6 +125,22 @@ class WindowsBackend(KeepAwakeBackend):
             pass
         finally:
             self._saved_lid = None
+
+    # -- power actions ------------------------------------------------------
+
+    def power_action(self, action: str) -> None:
+        if action == "Shutdown":
+            subprocess.run(
+                ["shutdown", "/s", "/t", "0"],
+                creationflags=_NO_WINDOW,
+                check=False,
+            )
+        elif action == "Hibernate":
+            # SetSuspendState(bHibernate=1, bForce=1, bWakeupEventsDisabled=0).
+            # Falls back to sleep if hibernation is disabled on the system.
+            ctypes.windll.powrprof.SetSuspendState(1, 1, 0)
+        elif action == "Sleep":
+            ctypes.windll.powrprof.SetSuspendState(0, 1, 0)
 
     def _powercfg(self, *args: str) -> str:
         result = subprocess.run(

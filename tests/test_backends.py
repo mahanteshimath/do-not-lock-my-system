@@ -40,6 +40,7 @@ def test_backend_implements_contract():
         "nudge",
         "prevent_lid_sleep",
         "restore_lid_sleep",
+        "power_action",
         "close",
     ):
         assert callable(getattr(backend, method))
@@ -55,3 +56,13 @@ def test_macos_backend_no_lid_close(monkeypatch):
     monkeypatch.setattr("sys.platform", "darwin")
     backend = get_backend()
     assert backend.lid_close_supported is False
+
+
+def test_windows_power_actions(monkeypatch):
+    monkeypatch.setattr("sys.platform", "win32")
+    assert get_backend().power_actions == ("Sleep", "Hibernate", "Shutdown")
+
+
+def test_macos_power_actions(monkeypatch):
+    monkeypatch.setattr("sys.platform", "darwin")
+    assert get_backend().power_actions == ("Sleep", "Shutdown")

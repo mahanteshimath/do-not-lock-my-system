@@ -22,6 +22,9 @@ class KeepAwakeBackend(ABC):
     #: Whether this backend can keep the system awake with the lid closed.
     lid_close_supported: bool = False
 
+    #: System power actions this backend can perform, e.g. ("Sleep", "Shutdown").
+    power_actions: tuple[str, ...] = ()
+
     @abstractmethod
     def prevent_sleep(self) -> None:
         """Tell the OS not to sleep or turn off the display.
@@ -58,6 +61,13 @@ class KeepAwakeBackend(ABC):
     def restore_lid_sleep(self) -> None:  # noqa: B027 - optional no-op hook
         """Restore the original lid-close behaviour saved by
         :meth:`prevent_lid_sleep`. Safe to call when nothing was changed."""
+
+    def power_action(self, action: str) -> None:  # noqa: B027 - optional hook
+        """Perform a system power action named in :attr:`power_actions`.
+
+        Called on the main thread after keep-alive has been released. No-op on
+        backends that don't support power actions.
+        """
 
     def close(self) -> None:
         """Release any resources held by the backend."""

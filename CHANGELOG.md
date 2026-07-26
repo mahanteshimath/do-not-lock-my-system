@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-07-26
+
+### Added
+- **Scheduled power action** — a "Then … after …" control to Sleep, Hibernate
+  (Windows), or Shut down the machine once a timer elapses (minutes or a `HH:MM`
+  clock time). The countdown is armed while keep-awake is running, releases
+  keep-awake first, and shows a 30-second cancelable warning before acting.
+  Backed by a new `power_actions`/`power_action` capability on the backend
+  interface (Windows: Sleep/Hibernate/Shutdown · macOS: Sleep/Shutdown).
+
 ## [1.2.2] - 2026-07-13
 
 ### Changed
@@ -78,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Windows Win32 logic now lives in `backends/windows.py`.
 - UI now uses platform-appropriate fonts and a native title bar on macOS.
 
+[1.3.0]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.3.0
 [1.2.2]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.2.2
 [1.2.1]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.2.1
 [1.2.0]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.2.0
