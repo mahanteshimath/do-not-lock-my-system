@@ -207,7 +207,7 @@ python -m dontlockpc              # launch the GUI
 ```python
 from dontlockpc.app import main
 
-main()   # opens the window; blocks until the app is closed
+main()  # opens the window; blocks until the app is closed
 ```
 
 ### 3. Drive the keep-awake engine headless (no GUI)
@@ -219,15 +219,15 @@ Use the platform backend directly — handy for scripts, servers, or CI runners.
 import time
 from dontlockpc.backends import get_backend
 
-backend = get_backend()           # WindowsBackend / MacOSBackend
-backend.prevent_sleep()           # block system sleep + display-off
+backend = get_backend()  # WindowsBackend / MacOSBackend
+backend.prevent_sleep()  # block system sleep + display-off
 try:
-    for _ in range(120):          # keep awake for ~1 hour (120 × 30s)
-        backend.nudge()           # invisible mouse ±1px + F15 keypress
+    for _ in range(120):  # keep awake for ~1 hour (120 × 30s)
+        backend.nudge()  # invisible mouse ±1px + F15 keypress
         time.sleep(30)
 finally:
-    backend.allow_sleep()         # restore default power behaviour
-    backend.close()               # also restores any lid-close override
+    backend.allow_sleep()  # restore default power behaviour
+    backend.close()  # also restores any lid-close override
 ```
 
 ### 4. Optional capabilities
