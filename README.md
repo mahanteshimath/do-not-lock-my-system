@@ -145,6 +145,86 @@ python dont_lock_pc.py  # legacy launcher (compatibility shim)
 
 ---
 
+## Set up & run programmatically
+
+### 1. Clone, isolate, install, launch
+
+**Windows (PowerShell):**
+
+```powershell
+git clone https://github.com/mahanteshimath/do-not-lock-my-system.git
+cd do-not-lock-my-system
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -e .
+python -m dontlockpc              # launch the GUI
+# or windowless (no console):  .\.venv\Scripts\pythonw.exe -m dontlockpc
+```
+
+**macOS / Linux (bash/zsh):**
+
+```bash
+git clone https://github.com/mahanteshimath/do-not-lock-my-system.git
+cd do-not-lock-my-system
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .                  # macOS: `brew install python-tk` if Tkinter is missing
+python -m dontlockpc              # launch the GUI
+```
+
+### 2. Launch the GUI from Python
+
+```python
+from dontlockpc.app import main
+
+main()   # opens the window; blocks until the app is closed
+```
+
+### 3. Drive the keep-awake engine headless (no GUI)
+
+Use the platform backend directly — handy for scripts, servers, or CI runners.
+`get_backend()` returns the right implementation for the current OS:
+
+```python
+import time
+from dontlockpc.backends import get_backend
+
+backend = get_backend()           # WindowsBackend / MacOSBackend
+backend.prevent_sleep()           # block system sleep + display-off
+try:
+    for _ in range(120):          # keep awake for ~1 hour (120 × 30s)
+        backend.nudge()           # invisible mouse ±1px + F15 keypress
+        time.sleep(30)
+finally:
+    backend.allow_sleep()         # restore default power behaviour
+    backend.close()               # also restores any lid-close override
+```
+
+### 4. Optional capabilities
+
+Guard these with their feature flags so the code stays cross-platform:
+
+```python
+backend = get_backend()
+
+# Keep awake with the lid closed (Windows only).
+if backend.lid_close_supported:
+    backend.prevent_lid_sleep()
+    # ... work ...
+    backend.restore_lid_sleep()
+
+# Power the machine down. power_actions is a subset of
+# ("Sleep", "Hibernate", "Shutdown") — macOS omits "Hibernate".
+if "Sleep" in backend.power_actions:
+    backend.power_action("Sleep")
+```
+
+> `prevent_lid_sleep` temporarily changes the active power plan's lid-close
+> action and `power_action` will sleep/hibernate/shut down the machine — call
+> `allow_sleep()` first so the OS can actually power down.
+
+---
+
 ## Build a standalone executable
 
 Ship it without requiring Python on the target machine using
