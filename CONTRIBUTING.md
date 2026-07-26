@@ -42,6 +42,7 @@ pytest              # tests
 ```
 src/dontlockpc/
 ├── app.py              # Tkinter UI + keep-alive orchestrator (platform-agnostic)
+├── autostart.py        # Cross-platform "run at login" management
 ├── tray.py             # System-tray wrapper with graceful degradation
 └── backends/
     ├── base.py         # KeepAwakeBackend abstract interface
@@ -53,10 +54,15 @@ src/dontlockpc/
 ## Adding a platform backend
 
 1. Create `src/dontlockpc/backends/<platform>.py`.
-2. Subclass `KeepAwakeBackend` and implement `prevent_sleep`, `allow_sleep`,
-   and `nudge`.
-3. Wire it up in `backends/__init__.get_backend()`.
-4. Add tests in `tests/`.
+2. Subclass `KeepAwakeBackend` and implement the required methods:
+   `prevent_sleep`, `allow_sleep`, and `nudge`.
+3. Optionally implement the capability hooks (each defaults to a safe no-op):
+   - `prevent_lid_sleep` / `restore_lid_sleep` + set `lid_close_supported = True`
+     to keep the system awake with the lid closed.
+   - `power_action(action)` + set `power_actions = (...)` (a subset of
+     `"Sleep"`, `"Hibernate"`, `"Shutdown"`) to enable the scheduled power timer.
+4. Wire it up in `backends/__init__.get_backend()`.
+5. Add tests in `tests/`.
 
 ## Commit & PR guidelines
 

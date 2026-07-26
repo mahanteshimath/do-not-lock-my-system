@@ -178,7 +178,9 @@ do-not-lock-my-system/
 │       ├── base.py          # KeepAwakeBackend abstract interface
 │       ├── windows.py       # Win32 ctypes implementation
 │       └── macos.py         # caffeinate + Quartz implementation
-├── tests/test_backends.py   # backend factory + contract tests
+├── tests/
+│   ├── test_backends.py     # backend factory + contract + capability tests
+│   └── test_power.py        # power-timer deadline parser tests
 ├── docs/screenshot.png      # UI preview used in this README
 ├── .github/                 # CI workflow, issue/PR templates
 ├── dont_lock_pc.py          # legacy launcher shim
@@ -200,25 +202,35 @@ do-not-lock-my-system/
 ```mermaid
 graph TD
     subgraph UI["🖥️ UI Layer (platform-agnostic)"]
-        TK["<b>Tkinter Window</b><br/>Status Card &amp; Controls<br/>Interval Configuration"]
+        TK["<b>Tkinter Window</b><br/>Status card · Interval<br/>Options: lid-close, autostart<br/>Scheduled power action"]
         TRAY["<b>SystemTray</b><br/>pystray (Win) /<br/>Dock fallback (macOS)"]
+        WARN["<b>Warning dialog</b><br/>30s cancelable"]
     end
 
     subgraph Core["⚙️ Application Core"]
-        APP["<b>DontLockPC</b><br/>Orchestrator + Event Handling"]
-        THREAD["<b>Keep-Alive Thread</b><br/>Daemon loop"]
+        APP["<b>DontLockPC</b><br/>Orchestrator + event handling"]
+        THREAD["<b>Keep-Alive Thread</b><br/>Daemon nudge loop"]
+        TIMER["<b>Power timer</b><br/>root.after countdown"]
     end
 
     subgraph Backend["🔌 Backend Abstraction"]
-        BASE["<b>KeepAwakeBackend</b><br/>prevent_sleep · allow_sleep · nudge"]
-        WIN["<b>WindowsBackend</b><br/>SetThreadExecutionState<br/>SendInput mouse + F15"]
-        MAC["<b>MacOSBackend</b><br/>caffeinate -dimsu<br/>Quartz CGEvent mouse + F15"]
+        BASE["<b>KeepAwakeBackend</b><br/>prevent/allow_sleep · nudge<br/>prevent/restore_lid_sleep · power_action"]
+        WIN["<b>WindowsBackend</b><br/>SetThreadExecutionState · SendInput F15<br/>powercfg lid · SetSuspendState / shutdown"]
+        MAC["<b>MacOSBackend</b><br/>caffeinate -dimsu · Quartz F15<br/>pmset sleepnow / osascript shutdown"]
+    end
+
+    subgraph OS["🔧 System integration"]
+        AUTO["<b>autostart</b><br/>Run key (Win) / LaunchAgent (macOS)"]
     end
 
     TK <--> APP
     TRAY <--> APP
-    APP -->|"Spawns on START"| THREAD
+    APP --> WARN
+    APP -->|"START"| THREAD
+    APP -->|"START (if armed)"| TIMER
+    APP --> AUTO
     THREAD --> BASE
+    TIMER -->|"deadline → warn → act"| BASE
     BASE -.->|"sys.platform == win32"| WIN
     BASE -.->|"sys.platform == darwin"| MAC
 ```
@@ -244,6 +256,32 @@ flowchart TD
     style L fill:#f38ba8,color:#11111b
     style E fill:#89b4fa,color:#11111b
     style G fill:#89b4fa,color:#11111b
+```
+
+---
+
+## Scheduled power action
+
+Optional: after a timer elapses, put the machine to **Sleep**, **Hibernate**
+(Windows), or **Shut down**. The countdown is armed on START and only runs while
+keep-alive is active; when it fires, keep-alive is released first so the OS can
+actually power down, and a 30-second cancelable warning gives you a chance to
+abort.
+
+```mermaid
+flowchart TD
+    S(["▶ START (action armed)"]) --> P["Parse timer field<br/>N minutes or HH:MM"]
+    P --> Q{"deadline reached?<br/>(checked while running)"}
+    Q -- "No" --> Q
+    Q -- "Yes" --> X["Show 30s cancelable warning"]
+    X -- "Cancel / STOP" --> Y(["Aborted · keep-alive keeps running"])
+    X -- "Countdown ends" --> W["Release keep-alive<br/>allow_sleep() + restore lid"]
+    W --> Z["backend.power_action()<br/>Sleep · Hibernate · Shutdown"]
+
+    style S fill:#a6e3a1,color:#11111b
+    style Y fill:#a6e3a1,color:#11111b
+    style Z fill:#f38ba8,color:#11111b
+    style W fill:#89b4fa,color:#11111b
 ```
 
 ---
