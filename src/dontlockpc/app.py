@@ -579,9 +579,8 @@ class DontLockPC:
             fg=self.TEXT,
             font=(FONT_SEMIBOLD, 11),
             padx=24,
-            pady=(18, 6),
         )
-        msg.pack()
+        msg.pack(pady=(18, 6))
         tk.Button(
             win,
             text="Cancel",

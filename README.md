@@ -159,7 +159,6 @@ Run it any of these ways:
 ```bash
 dontlockpc              # console entry point (after install)
 python -m dontlockpc    # run the package
-python dont_lock_pc.py  # legacy launcher (compatibility shim)
 ```
 
 | Action | Behavior |
@@ -290,10 +289,10 @@ do-not-lock-my-system/
 │       └── macos.py         # caffeinate + Quartz implementation
 ├── tests/
 │   ├── test_backends.py     # backend factory + contract + capability tests
-│   └── test_power.py        # power-timer deadline parser tests
+│   ├── test_power.py        # power-timer deadline parser tests
+│   └── test_power_actions.py # cross-platform power-action + dialog tests
 ├── docs/screenshot.png      # UI preview used in this README
 ├── .github/                 # CI workflow, issue/PR templates
-├── dont_lock_pc.py          # legacy launcher shim
 ├── dontlockpc.spec          # PyInstaller build spec (standalone exe/app)
 ├── pyproject.toml           # packaging + tooling config
 ├── requirements.txt         # runtime deps (with platform markers)
