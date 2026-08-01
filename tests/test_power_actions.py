@@ -61,7 +61,7 @@ def test_macos_unknown_action_is_noop(monkeypatch):
 
 
 @pytest.mark.skipif(not IS_WINDOWS, reason="Windows-only power API")
-def test_windows_sleep_and_hibernate_call_setsuspendstate(monkeypatch):
+def test_windows_sleep_calls_setsuspendstate(monkeypatch):
     import ctypes
 
     from dontlockpc.backends.windows import WindowsBackend
@@ -75,11 +75,19 @@ def test_windows_sleep_and_hibernate_call_setsuspendstate(monkeypatch):
 
     monkeypatch.setattr(ctypes.windll, "powrprof", _FakePowrprof())
 
-    backend = WindowsBackend()
-    backend.power_action("Sleep")
-    backend.power_action("Hibernate")
-    # Sleep => bHibernate=0, Hibernate => bHibernate=1; both force, wake-enabled.
-    assert seen == [(0, 1, 0), (1, 1, 0)]
+    WindowsBackend().power_action("Sleep")
+    # Sleep => bHibernate=0, force, wake-enabled.
+    assert seen == [(0, 1, 0)]
+
+
+@pytest.mark.skipif(not IS_WINDOWS, reason="Windows-only power API")
+def test_windows_hibernate_runs_shutdown_h(monkeypatch):
+    from dontlockpc.backends import windows
+
+    calls = []
+    monkeypatch.setattr(windows.subprocess, "run", lambda cmd, **kw: calls.append(cmd))
+    windows.WindowsBackend().power_action("Hibernate")
+    assert calls == [["shutdown", "/h"]]
 
 
 @pytest.mark.skipif(not IS_WINDOWS, reason="Windows-only power API")

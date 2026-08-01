@@ -136,9 +136,13 @@ class WindowsBackend(KeepAwakeBackend):
                 check=False,
             )
         elif action == "Hibernate":
-            # SetSuspendState(bHibernate=1, bForce=1, bWakeupEventsDisabled=0).
-            # Falls back to sleep if hibernation is disabled on the system.
-            ctypes.windll.powrprof.SetSuspendState(1, 1, 0)
+            # `shutdown /h` reliably hibernates (SetSuspendState can silently
+            # fall back to sleep on some machines); use the power API only if
+            # the command is unavailable/disabled.
+            try:
+                subprocess.run(["shutdown", "/h"], creationflags=_NO_WINDOW, check=True)
+            except Exception:
+                ctypes.windll.powrprof.SetSuspendState(1, 1, 0)
         elif action == "Sleep":
             ctypes.windll.powrprof.SetSuspendState(0, 1, 0)
 
