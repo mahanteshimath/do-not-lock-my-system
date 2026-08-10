@@ -1,0 +1,114 @@
+site_name: Don't Lock My PC
+site_description: >-
+  Keep your computer awake and unlocked while long-running AI agents work — a
+  lightweight cross-platform (Windows + macOS) utility that prevents locking,
+  sleeping, and display-off.
+site_author: Mahantesh Hiremath
+# Project page (not a user page), so the repo name must stay in the URL.
+site_url: https://mahanteshimath.github.io/do-not-lock-my-system/
+
+repo_url: https://github.com/mahanteshimath/do-not-lock-my-system
+repo_name: mahanteshimath/do-not-lock-my-system
+edit_uri: edit/main/docs/
+
+copyright: MIT licensed · Developed with ❤️ by Mahantesh Hiremath
+
+theme:
+  name: material
+  language: en
+  icon:
+    logo: material/flash
+    repo: fontawesome/brands/github
+  favicon: assets/favicon.svg
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.top
+    - navigation.instant
+    - navigation.tracking
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - content.action.edit
+
+extra_css:
+  - stylesheets/extra.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/mahanteshimath/do-not-lock-my-system
+      name: Source on GitHub
+    - icon: fontawesome/solid/link
+      link: https://bit.ly/atozaboutdata
+      name: Mahantesh Hiremath
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.snippets:
+      base_path: ["."]
+      check_paths: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+plugins:
+  - search
+
+nav:
+  - Home: index.md
+  - Get started:
+      - Installation: installation.md
+      - Usage: usage.md
+      - Features: features.md
+      - FAQ & troubleshooting: faq.md
+  - Reference:
+      - Architecture: architecture.md
+      - Python API: api.md
+      - Build a standalone app: building.md
+  - Project:
+      - Development: development.md
+      - Roadmap: roadmap.md
+      - Changelog: changelog.md

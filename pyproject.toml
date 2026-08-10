@@ -39,6 +39,7 @@ dev = ["ruff>=0.5", "pytest>=7.0", "pyinstaller>=6.0"]
 
 [project.urls]
 Homepage = "https://github.com/mahanteshimath/do-not-lock-my-system"
+Documentation = "https://mahanteshimath.github.io/do-not-lock-my-system/"
 Issues = "https://github.com/mahanteshimath/do-not-lock-my-system/issues"
 Source = "https://github.com/mahanteshimath/do-not-lock-my-system"
 

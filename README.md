@@ -14,6 +14,7 @@ uninterrupted, then lets the machine sleep normally when you stop it.
 </p>
 
 <p align="center">
+  <a href="https://mahanteshimath.github.io/do-not-lock-my-system/"><img src="https://img.shields.io/badge/docs-online-94e2d5?logo=materialformkdocs&logoColor=white" alt="Documentation"></a>
   <a href="https://github.com/mahanteshimath/do-not-lock-my-system/actions/workflows/ci.yml"><img src="https://github.com/mahanteshimath/do-not-lock-my-system/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
   <a href="https://github.com/mahanteshimath/do-not-lock-my-system/releases/latest"><img src="https://img.shields.io/github/v/release/mahanteshimath/do-not-lock-my-system?display_name=tag&sort=semver" alt="Latest release"></a>
   <a href="https://github.com/mahanteshimath/do-not-lock-my-system/releases"><img src="https://img.shields.io/github/downloads/mahanteshimath/do-not-lock-my-system/total" alt="Downloads"></a>
@@ -27,6 +28,15 @@ uninterrupted, then lets the machine sleep normally when you stop it.
   <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs welcome"></a>
   <a href="https://github.com/mahanteshimath/do-not-lock-my-system/stargazers"><img src="https://img.shields.io/github/stars/mahanteshimath/do-not-lock-my-system?style=social" alt="GitHub stars"></a>
 </p>
+
+---
+
+## 📖 Documentation
+
+**[Read the full documentation →](https://mahanteshimath.github.io/do-not-lock-my-system/)**
+
+Installation, usage, FAQ & troubleshooting, architecture, and the Python API —
+all in one place.
 
 ---
 
@@ -470,7 +480,8 @@ and restore them on stop.
 
 ## Support
 
-- 🐛 **Bugs / features:** [open an issue](https://github.com/mahanteshimath/do-not-lock-my-system/issues/new/choose)
+- � **Documentation:** [mahanteshimath.github.io/do-not-lock-my-system](https://mahanteshimath.github.io/do-not-lock-my-system/)
+- �🐛 **Bugs / features:** [open an issue](https://github.com/mahanteshimath/do-not-lock-my-system/issues/new/choose)
 - 💬 **Questions / ideas:** start a [discussion](https://github.com/mahanteshimath/do-not-lock-my-system/discussions)
 - ⭐ If this saved an agent run, consider **starring** the repo — it helps others find it.
 
