@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-08-11
+
+### Fixed
+- **Scheduled power action never fired.** The warning dialog built its message
+  label with `pady=(18, 6)` — a 2-tuple is only valid on `.pack()`, so Tk raised
+  `bad screen distance` before the widgets and countdown were created. The
+  result was an empty "Power action" window and no Sleep/Hibernate/Shutdown at
+  any duration, on both Windows and macOS.
+- **Windows hibernate is now reliable.** Uses `shutdown /h` instead of
+  `SetSuspendState(1, 1, 0)`, which can silently fall back to sleep on some
+  machines. Falls back to the power API if the command is unavailable.
+
+### Added
+- Documentation site built with MkDocs Material, published to GitHub Pages at
+  <https://mahanteshimath.github.io/do-not-lock-my-system/>.
+- `tests/test_power_actions.py` — covers the Windows and macOS power actions
+  and the warning-dialog render/execute flow that regressed above.
+
+### Removed
+- The redundant `dont_lock_pc.py` legacy launcher shim; use `dontlockpc` or
+  `python -m dontlockpc`.
+
 ## [1.3.0] - 2026-07-26
 
 ### Added
@@ -88,6 +110,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Windows Win32 logic now lives in `backends/windows.py`.
 - UI now uses platform-appropriate fonts and a native title bar on macOS.
 
+[1.3.1]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.3.1
 [1.3.0]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.3.0
 [1.2.2]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.2.2
 [1.2.1]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.2.1
