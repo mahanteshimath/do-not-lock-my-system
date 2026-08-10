@@ -1,0 +1,176 @@
+/* Catppuccin palette — Mocha (dark) and Latte (light), matching the app UI. */
+
+[data-md-color-scheme="slate"] {
+  --ctp-base: #11111b;
+  --ctp-mantle: #181825;
+  --ctp-surface: #313244;
+  --ctp-text: #cdd6f4;
+  --ctp-subtext: #a6adc8;
+  --ctp-overlay: #585b70;
+  --ctp-green: #a6e3a1;
+  --ctp-red: #f38ba8;
+  --ctp-teal: #94e2d5;
+  --ctp-blue: #89b4fa;
+  --ctp-mauve: #cba6f7;
+
+  --md-primary-fg-color: #11111b;
+  --md-accent-fg-color: var(--ctp-teal);
+  --md-default-bg-color: var(--ctp-base);
+  --md-default-fg-color: var(--ctp-text);
+  --md-default-fg-color--light: var(--ctp-subtext);
+  --md-default-fg-color--lighter: var(--ctp-overlay);
+  --md-typeset-color: var(--ctp-text);
+  --md-typeset-a-color: var(--ctp-teal);
+  --md-code-bg-color: var(--ctp-mantle);
+  --md-code-fg-color: var(--ctp-text);
+  --md-footer-bg-color: var(--ctp-mantle);
+}
+
+[data-md-color-scheme="default"] {
+  --ctp-base: #eff1f5;
+  --ctp-mantle: #e6e9ef;
+  --ctp-surface: #ccd0da;
+  --ctp-text: #4c4f69;
+  --ctp-subtext: #5c5f77;
+  --ctp-overlay: #9ca0b0;
+  --ctp-green: #40a02b;
+  --ctp-red: #d20f39;
+  --ctp-teal: #179299;
+  --ctp-blue: #1e66f5;
+  --ctp-mauve: #8839ef;
+
+  --md-primary-fg-color: #1e1e2e;
+  --md-accent-fg-color: var(--ctp-teal);
+  --md-typeset-a-color: var(--ctp-teal);
+}
+
+/* ---------------------------------------------------------------- hero -- */
+
+.hero {
+  text-align: center;
+  padding: 2.5rem 1rem 1rem;
+}
+
+.hero__title {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 0 0 0.4rem;
+  background: linear-gradient(100deg, var(--ctp-teal), var(--ctp-mauve));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero__tagline {
+  font-size: 1.15rem;
+  color: var(--md-default-fg-color--light);
+  max-width: 40rem;
+  margin: 0 auto 0.75rem;
+}
+
+.hero__motto {
+  font-style: italic;
+  color: var(--ctp-teal);
+  margin-bottom: 1.5rem;
+}
+
+.hero__badges img {
+  margin: 0.15rem;
+  vertical-align: middle;
+}
+
+.hero__shot {
+  margin-top: 2rem;
+}
+
+.hero__shot img {
+  width: 340px;
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
+}
+
+@media screen and (max-width: 44.9em) {
+  .hero__title {
+    font-size: 2.1rem;
+  }
+}
+
+/* ----------------------------------------------------------- buttons --- */
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin: 1.75rem 0 0.5rem;
+}
+
+.md-typeset .btn-row a.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid var(--ctp-overlay);
+  color: var(--md-default-fg-color);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.md-typeset .btn-row a.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.md-typeset .btn-row a.btn--primary {
+  background: var(--ctp-green);
+  border-color: var(--ctp-green);
+  color: #11111b;
+}
+
+.md-typeset .btn-row a.btn--secondary {
+  background: var(--ctp-teal);
+  border-color: var(--ctp-teal);
+  color: #11111b;
+}
+
+/* -------------------------------------------------------------- cards --- */
+
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.grid-cards .card {
+  border: 1px solid var(--md-default-fg-color--lighter);
+  border-radius: 10px;
+  padding: 1.1rem 1.2rem;
+  background: var(--md-code-bg-color);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.grid-cards .card:hover {
+  border-color: var(--ctp-teal);
+  transform: translateY(-2px);
+}
+
+.grid-cards .card h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1rem;
+}
+
+.grid-cards .card p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--md-default-fg-color--light);
+}
+
+/* Mermaid diagrams sit centred on the page. */
+.md-typeset .mermaid {
+  text-align: center;
+}
