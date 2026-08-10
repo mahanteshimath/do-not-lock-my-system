@@ -34,8 +34,8 @@ small abstraction, `KeepAwakeBackend`, selected automatically at runtime:
 ```python
 from dontlockpc.backends import get_backend
 
-backend = get_backend()   # WindowsBackend or MacOSBackend
-print(backend.name)       # "windows" / "macos"
+backend = get_backend()  # WindowsBackend or MacOSBackend
+print(backend.name)  # "windows" / "macos"
 ```
 
 Adding Linux support means writing one new backend class — no UI changes. See
