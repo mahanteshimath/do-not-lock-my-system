@@ -1,7 +1,7 @@
 name: Docs
 
-# Build the MkDocs site and publish it to GitHub Pages.
-# Requires: Settings -> Pages -> Source = "GitHub Actions".
+# Build the MkDocs site and publish it to the gh-pages branch.
+# Requires: Settings -> Pages -> Source = "Deploy from a branch" -> gh-pages / (root).
 
 on:
   push:
@@ -15,9 +15,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 # Never run two deployments at once; let a newer push finish instead.
 concurrency:
@@ -25,11 +23,13 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
-    name: Build site
+  deploy:
+    name: Build and deploy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -41,22 +41,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-docs.txt
 
-      - name: Build (strict — fails on broken links)
+      - name: Validate (strict — fails on broken links)
         run: mkdocs build --strict
 
-      - uses: actions/configure-pages@v5
-
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: site
-
-  deploy:
-    name: Deploy to Pages
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Deploy to gh-pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdocs gh-deploy --force
