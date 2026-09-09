@@ -1,0 +1,6 @@
+{
+  "name": "Don't Lock My PC",
+  "description": "Keep your computer awake and unlocked while long-running AI agents do the work.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

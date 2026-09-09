@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1270 760" width="1270" height="760">
+  <defs>
+    <linearGradient id="g2-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#11111b"/>
+      <stop offset="100%" stop-color="#181825"/>
+    </linearGradient>
+    <filter id="shadow2" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <rect width="1270" height="760" fill="url(#g2-bg)"/>
+
+  <!-- Header -->
+  <text x="635" y="90" fill="#cdd6f4" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="38" font-weight="800" text-anchor="middle">Smart Power Management</text>
+  <text x="635" y="130" fill="#a6adc8" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="18" text-anchor="middle">Keep awake while your agents run — then automatically power down when done.</text>
+
+  <!-- 3 Feature Columns -->
+  <!-- Col 1: Scheduled Actions -->
+  <g transform="translate(100, 200)" filter="url(#shadow2)">
+    <rect width="320" height="460" rx="16" fill="#181825" stroke="#313244" stroke-width="1.5"/>
+    <circle cx="50" cy="50" r="24" fill="#1e1e2e"/>
+    <text x="50" y="58" font-size="22" text-anchor="middle">⏱️</text>
+    <text x="30" y="115" fill="#cdd6f4" font-family="sans-serif" font-size="20" font-weight="700">Timed Shutdown</text>
+    <text x="30" y="145" fill="#a6adc8" font-family="sans-serif" font-size="14" line-height="1.5">Set a duration or exact time:</text>
+    
+    <rect x="30" y="170" width="260" height="42" rx="8" fill="#11111b" stroke="#313244"/>
+    <text x="45" y="196" fill="#fab387" font-family="monospace" font-size="14">Then Shutdown after 90m</text>
+
+    <rect x="30" y="225" width="260" height="42" rx="8" fill="#11111b" stroke="#313244"/>
+    <text x="45" y="251" fill="#94e2d5" font-family="monospace" font-size="14">Then Sleep at 23:30</text>
+
+    <text x="30" y="310" fill="#a6adc8" font-family="sans-serif" font-size="13">Supports:</text>
+    <text x="30" y="335" fill="#cdd6f4" font-family="sans-serif" font-size="13">• System Sleep (energy saver)</text>
+    <text x="30" y="360" fill="#cdd6f4" font-family="sans-serif" font-size="13">• Full Hibernation</text>
+    <text x="30" y="385" fill="#cdd6f4" font-family="sans-serif" font-size="13">• Complete Power Off / Shutdown</text>
+  </g>
+
+  <!-- Col 2: 30s Safety Cancel Modal -->
+  <g transform="translate(475, 175)" filter="url(#shadow2)">
+    <rect width="320" height="485" rx="16" fill="#181825" stroke="#f38ba8" stroke-width="1.5"/>
+    <circle cx="50" cy="50" r="24" fill="#1e1e2e"/>
+    <text x="50" y="58" font-size="22" text-anchor="middle">🛡️</text>
+    <text x="30" y="115" fill="#cdd6f4" font-family="sans-serif" font-size="20" font-weight="700">30-Second Warning</text>
+    <text x="30" y="145" fill="#a6adc8" font-family="sans-serif" font-size="14">Never lose work accidentally.</text>
+
+    <!-- Modal Box Preview -->
+    <rect x="25" y="175" width="270" height="200" rx="12" fill="#11111b" stroke="#f38ba8" stroke-opacity="0.4"/>
+    <text x="160" y="215" fill="#f38ba8" font-family="sans-serif" font-size="13" font-weight="700" text-anchor="middle">Power Action Warning</text>
+    <text x="160" y="245" fill="#cdd6f4" font-family="sans-serif" font-size="12" text-anchor="middle">System will shutdown in</text>
+    <text x="160" y="285" fill="#f38ba8" font-family="monospace" font-size="28" font-weight="700" text-anchor="middle">24s</text>
+    <text x="160" y="315" fill="#585b70" font-family="sans-serif" font-size="10" text-anchor="middle">Audio beeps notify you across the room</text>
+    <rect x="55" y="330" width="210" height="32" rx="6" fill="#a6e3a1"/>
+    <text x="160" y="351" fill="#11111b" font-family="sans-serif" font-size="12" font-weight="700" text-anchor="middle">Cancel</text>
+
+    <text x="30" y="420" fill="#a6adc8" font-family="sans-serif" font-size="13">Gives you time to pause or cancel before power triggers.</text>
+  </g>
+
+  <!-- Col 3: Lid Closed & Autostart -->
+  <g transform="translate(850, 200)" filter="url(#shadow2)">
+    <rect width="320" height="460" rx="16" fill="#181825" stroke="#313244" stroke-width="1.5"/>
+    <circle cx="50" cy="50" r="24" fill="#1e1e2e"/>
+    <text x="50" y="58" font-size="22" text-anchor="middle">💻</text>
+    <text x="30" y="115" fill="#cdd6f4" font-family="sans-serif" font-size="20" font-weight="700">Lid-Closed Mode</text>
+    <text x="30" y="145" fill="#a6adc8" font-family="sans-serif" font-size="14">Run AI agents in your bag or dock:</text>
+
+    <rect x="30" y="175" width="260" height="60" rx="8" fill="#11111b" stroke="#313244"/>
+    <text x="45" y="200" fill="#a6e3a1" font-family="sans-serif" font-size="14" font-weight="600">✓ Stay awake with lid closed</text>
+    <text x="45" y="222" fill="#585b70" font-family="sans-serif" font-size="11">Restores power plan on exit</text>
+
+    <rect x="30" y="250" width="260" height="60" rx="8" fill="#11111b" stroke="#313244"/>
+    <text x="45" y="275" fill="#94e2d5" font-family="sans-serif" font-size="14" font-weight="600">✓ Run on Login</text>
+    <text x="45" y="297" fill="#585b70" font-family="sans-serif" font-size="11">Starts quietly in background</text>
+
+    <text x="30" y="350" fill="#a6adc8" font-family="sans-serif" font-size="13">No admin hacks required.</text>
+    <text x="30" y="375" fill="#585b70" font-family="sans-serif" font-size="12">Automatic power plan restoration ensures your laptop never overheats permanently.</text>
+  </g>
+</svg>

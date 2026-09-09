@@ -1,5 +1,0 @@
-# Documentation site dependencies (MkDocs Material).
-#   pip install -r requirements-docs.txt
-#   mkdocs serve
-mkdocs-material>=9.5
-pymdown-extensions>=10.0
