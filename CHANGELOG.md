@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-09-16
+
+### Reverted
+- **Reverted the v2.0.0 React/Vite web rewrite; restored the native
+  Python/Tkinter desktop app from v1.3.1.** A browser tab cannot reliably
+  prevent sleep in the background, override lid-close behavior, or schedule
+  a real hibernate/shutdown — the app's core purpose needs OS-level APIs
+  that only a native app can call. `src/dontlockpc/`, `pyproject.toml`,
+  `requirements*.txt`, `dontlockpc.spec`, `mkdocs.yml`, and the CI/Docs
+  workflows are back to their v1.3.1 state.
+- Removed the React/Vite/TypeScript sources, `package.json`, and Vite config
+  added in v2.0.0.
+
 ## [2.0.0] - 2026-09-16
 
 ### Changed
@@ -127,6 +140,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Windows Win32 logic now lives in `backends/windows.py`.
 - UI now uses platform-appropriate fonts and a native title bar on macOS.
 
+[2.1.0]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v2.1.0
 [2.0.0]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v2.0.0
 [1.3.1]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.3.1
 [1.3.0]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.3.0
