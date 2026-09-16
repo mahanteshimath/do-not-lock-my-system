@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-09-16
+
+### Changed
+- **Complete rewrite: Python/Tkinter desktop app → React/Vite/TypeScript web
+  app.** The keep-awake logic now runs in the browser via the Screen Wake Lock
+  API, with a background timer and battery-status fallback for browsers that
+  don't support it yet. This is a breaking change: there is no longer a
+  Python package, CLI entry point, or PyInstaller executable.
+- CI now runs `npm ci`, a TypeScript type-check, and a Vite production build
+  instead of ruff/pytest.
+
+### Removed
+- All Python sources (`src/dontlockpc/`), `pyproject.toml`,
+  `requirements*.txt`, and the PyInstaller spec — superseded by the web app.
+- The MkDocs-based documentation site and its `Docs` deploy workflow
+  (`mkdocs.yml`, `requirements-docs.txt` were removed in the rewrite).
+
 ## [1.3.1] - 2026-08-11
 
 ### Fixed
@@ -110,6 +127,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Windows Win32 logic now lives in `backends/windows.py`.
 - UI now uses platform-appropriate fonts and a native title bar on macOS.
 
+[2.0.0]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v2.0.0
 [1.3.1]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.3.1
 [1.3.0]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.3.0
 [1.2.2]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.2.2
