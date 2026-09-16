@@ -38,6 +38,11 @@ htmlcov/
 site/
 .cache/
 
+# Node / Vite
+node_modules/
+dist/
+*.tsbuildinfo
+
 # IDE / editor
 .idea/
 *.swp
