@@ -31,6 +31,42 @@ else:  # Linux / other
     FONT = "DejaVu Sans"
     FONT_SEMIBOLD = "DejaVu Sans"
 
+# Quick presets: one-click interval + scheduled power action combos.
+PRESETS: tuple[dict[str, str], ...] = (
+    {
+        "id": "continuous",
+        "name": "Continuous",
+        "emoji": "\u267e\ufe0f",
+        "interval": "30",
+        "action": "Off",
+        "time": "",
+    },
+    {
+        "id": "agent",
+        "name": "30m Agent",
+        "emoji": "\u26a1",
+        "interval": "30",
+        "action": "Sleep",
+        "time": "30",
+    },
+    {
+        "id": "model",
+        "name": "2h Model Run",
+        "emoji": "\U0001f4e6",
+        "interval": "30",
+        "action": "Sleep",
+        "time": "120",
+    },
+    {
+        "id": "overnight",
+        "name": "6h Overnight",
+        "emoji": "\U0001f319",
+        "interval": "30",
+        "action": "Shutdown",
+        "time": "360",
+    },
+)
+
 
 class DontLockPC:
     """Main application window and keep-alive orchestrator."""
@@ -55,6 +91,9 @@ class DontLockPC:
         self._pulse_state = False
         self._power_deadline: float | None = None
         self._power_win: tk.Toplevel | None = None
+        self.preset_buttons: dict[str, tk.Button] = {}
+        self.selected_preset_id: str | None = "continuous"
+        self._applying_preset = False
 
         self.tray = SystemTray(
             on_show=self.show_window,
@@ -96,7 +135,7 @@ class DontLockPC:
         content.columnconfigure(0, weight=1)
         # Flexible top/bottom rows keep the controls vertically centered
         content.rowconfigure(0, weight=1)
-        content.rowconfigure(8, weight=1)
+        content.rowconfigure(9, weight=1)
 
         # Header
         tk.Label(
@@ -122,6 +161,40 @@ class DontLockPC:
             highlightthickness=1,
         )
         self.card.grid(row=3, column=0, sticky="ew", ipady=18)
+
+        # Quick presets
+        presets_outer = tk.Frame(content, bg=self.BG)
+        presets_outer.grid(row=4, column=0, sticky="ew", pady=(14, 0))
+        tk.Label(
+            presets_outer,
+            text="Quick Presets:",
+            bg=self.BG,
+            fg=self.SUBTEXT,
+            font=(FONT, 9),
+        ).pack(pady=(0, 4))
+        presets_row = tk.Frame(presets_outer, bg=self.BG)
+        presets_row.pack(fill=tk.X)
+        for preset in PRESETS:
+            btn = tk.Button(
+                presets_row,
+                text=f"{preset['emoji']} {preset['name']}",
+                command=lambda p=preset: self._select_preset(p),
+                font=(FONT, 9),
+                bg=self.CARD,
+                fg=self.SUBTEXT,
+                activebackground=self.CARD,
+                activeforeground=self.TEAL,
+                relief="flat",
+                bd=1,
+                highlightbackground=self.DIM,
+                highlightthickness=1,
+                cursor="hand2",
+                padx=4,
+                pady=6,
+            )
+            btn.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=2)
+            self.preset_buttons[preset["id"]] = btn
+        self._refresh_preset_styles()
 
         status_row = tk.Frame(self.card, bg=self.CARD)
         status_row.pack(pady=(12, 4))
@@ -173,7 +246,7 @@ class DontLockPC:
 
         # Interval control
         interval_frame = tk.Frame(content, bg=self.BG)
-        interval_frame.grid(row=4, column=0, pady=(18, 12))
+        interval_frame.grid(row=5, column=0, pady=(18, 12))
 
         tk.Label(
             interval_frame,
@@ -184,6 +257,7 @@ class DontLockPC:
         ).pack(side=tk.LEFT, padx=(0, 8))
 
         self.interval_var = tk.StringVar(value="30")
+        self.interval_var.trace_add("write", self._clear_preset_selection)
         self.interval_entry = tk.Entry(
             interval_frame,
             textvariable=self.interval_var,
@@ -205,7 +279,7 @@ class DontLockPC:
 
         # Action buttons
         btn_frame = tk.Frame(content, bg=self.BG)
-        btn_frame.grid(row=5, column=0, sticky="ew", pady=8)
+        btn_frame.grid(row=6, column=0, sticky="ew", pady=8)
 
         self.start_btn = tk.Button(
             btn_frame,
@@ -244,7 +318,7 @@ class DontLockPC:
 
         # Options (lid-close + run-at-login)
         options = tk.Frame(content, bg=self.BG)
-        options.grid(row=6, column=0, sticky="ew", pady=(6, 0))
+        options.grid(row=7, column=0, sticky="ew", pady=(6, 0))
         options.columnconfigure(0, weight=1)
         opt_row = 0
 
@@ -257,6 +331,7 @@ class DontLockPC:
                 power, text="Then", bg=self.BG, fg=self.SUBTEXT, font=(FONT, 9)
             ).pack(side=tk.LEFT, padx=(0, 6))
             self.power_action_var = tk.StringVar(value="Off")
+            self.power_action_var.trace_add("write", self._clear_preset_selection)
             self.power_menu = tk.OptionMenu(
                 power, self.power_action_var, "Off", *self.backend.power_actions
             )
@@ -277,6 +352,7 @@ class DontLockPC:
                 power, text="after", bg=self.BG, fg=self.SUBTEXT, font=(FONT, 9)
             ).pack(side=tk.LEFT, padx=6)
             self.power_time_var = tk.StringVar(value="")
+            self.power_time_var.trace_add("write", self._clear_preset_selection)
             self.power_entry = tk.Entry(
                 power,
                 textvariable=self.power_time_var,
@@ -344,7 +420,7 @@ class DontLockPC:
 
         # Footer
         footer = tk.Frame(content, bg=self.BG)
-        footer.grid(row=7, column=0, sticky="ew", pady=(16, 0))
+        footer.grid(row=8, column=0, sticky="ew", pady=(16, 0))
         footer.columnconfigure(0, weight=1)
         if self.tray.supported:
             footer_text = "\u2715 exits  \u2022  \u2500 minimize hides to the tray"
@@ -400,6 +476,41 @@ class DontLockPC:
         )
         link.bind("<Enter>", lambda _e: link.config(fg=self.GREEN))
         link.bind("<Leave>", lambda _e: link.config(fg=self.TEAL))
+
+    # -- quick presets -------------------------------------------------------
+
+    def _select_preset(self, preset: dict[str, str]) -> None:
+        if self.running:
+            return
+        self._applying_preset = True
+        try:
+            self.selected_preset_id = preset["id"]
+            self.interval_var.set(preset["interval"])
+            if getattr(self, "power_action_var", None) is not None:
+                action = (
+                    preset["action"]
+                    if preset["action"] in ("Off", *self.backend.power_actions)
+                    else "Off"
+                )
+                self.power_action_var.set(action)
+                self.power_time_var.set(preset["time"])
+        finally:
+            self._applying_preset = False
+        self._refresh_preset_styles()
+
+    def _clear_preset_selection(self, *_args) -> None:
+        if self._applying_preset or self.selected_preset_id is None:
+            return
+        self.selected_preset_id = None
+        self._refresh_preset_styles()
+
+    def _refresh_preset_styles(self) -> None:
+        for preset_id, btn in self.preset_buttons.items():
+            selected = preset_id == self.selected_preset_id
+            btn.config(
+                fg=self.GREEN if selected else self.SUBTEXT,
+                highlightbackground=self.GREEN if selected else self.DIM,
+            )
 
     def _draw_pulse(self, color: str) -> None:
         self.pulse_canvas.delete("all")
@@ -479,6 +590,8 @@ class DontLockPC:
         self.stop_btn.config(state=tk.NORMAL, bg=self.RED, fg=self.BG)
         self.interval_entry.config(state=tk.DISABLED)
         self.tray.set_active(True)
+        for btn in self.preset_buttons.values():
+            btn.config(state=tk.DISABLED)
 
         # Optionally keep the system awake with the lid closed.
         if getattr(self, "lid_var", None) is not None and self.lid_var.get():
@@ -510,6 +623,8 @@ class DontLockPC:
         self.stop_btn.config(state=tk.DISABLED, bg=self.CARD, fg=self.DIM)
         self.interval_entry.config(state=tk.NORMAL)
         self.tray.set_active(False)
+        for btn in self.preset_buttons.values():
+            btn.config(state=tk.NORMAL)
         # Restore the original lid-close behaviour.
         self.backend.restore_lid_sleep()
         # Disarm any scheduled power action and re-enable its controls.

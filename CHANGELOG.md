@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-09-16
+
+### Added
+- **Quick Presets** — one-click buttons (Continuous, 30m Agent, 2h Model Run,
+  6h Overnight) that set the interval and scheduled power action together.
+  Selecting a preset highlights it; editing the interval, power action, or
+  timer manually clears the highlight. Presets are disabled while keep-awake
+  is running.
+
 ## [2.1.0] - 2026-09-16
 
 ### Reverted
@@ -140,6 +149,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Windows Win32 logic now lives in `backends/windows.py`.
 - UI now uses platform-appropriate fonts and a native title bar on macOS.
 
+[2.2.0]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v2.2.0
 [2.1.0]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v2.1.0
 [2.0.0]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v2.0.0
 [1.3.1]: https://github.com/mahanteshimath/do-not-lock-my-system/releases/tag/v1.3.1
