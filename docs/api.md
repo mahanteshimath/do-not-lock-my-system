@@ -124,10 +124,10 @@ reuse or test directly:
 ```python
 from dontlockpc.app import DontLockPC
 
-DontLockPC._parse_power_deadline("90")     # epoch, 90 minutes from now
+DontLockPC._parse_power_deadline("90")  # epoch, 90 minutes from now
 DontLockPC._parse_power_deadline("23:30")  # epoch, next 23:30
-DontLockPC._parse_power_deadline("")       # None — timer disarmed
-DontLockPC._parse_power_deadline("nope")   # None — timer disarmed
+DontLockPC._parse_power_deadline("")  # None — timer disarmed
+DontLockPC._parse_power_deadline("nope")  # None — timer disarmed
 ```
 
 ---
