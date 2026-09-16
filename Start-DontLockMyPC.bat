@@ -1,3 +1,3 @@
 @echo off
 cd /d "%~dp0"
-".venv\Scripts\python.exe" -m dontlockpc
+start "" ".venv\Scripts\pythonw.exe" -m dontlockpc
